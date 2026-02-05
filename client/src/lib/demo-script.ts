@@ -75,7 +75,7 @@ export const badgeUpdates: BadgeUpdate[] = [
 ];
 
 // Total duration of the demo in seconds
-export const demoDuration = 92;
+export const demoDuration = 96;
 
 // Helper to get current badge states at a given time
 export function getBadgesAtTime(time: number): Badge[] {
