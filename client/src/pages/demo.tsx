@@ -156,6 +156,33 @@ export default function DemoPage() {
   return (
     <div className="min-h-screen bg-[#F5F5F5] flex flex-col relative overflow-hidden">
       <audio ref={audioRef} src="/audio/demo-call.mp3" preload="auto" />
+      
+      {/* Subtle animated gradient background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div 
+          className="absolute top-0 -left-1/4 w-[600px] h-[600px] rounded-full blur-3xl opacity-30 animate-pulse"
+          style={{ 
+            background: 'radial-gradient(circle, rgba(1,122,255,0.3) 0%, transparent 70%)',
+            animationDuration: '8s'
+          }} 
+        />
+        <div 
+          className="absolute bottom-0 -right-1/4 w-[500px] h-[500px] rounded-full blur-3xl opacity-25 animate-pulse"
+          style={{ 
+            background: 'radial-gradient(circle, rgba(1,122,255,0.25) 0%, transparent 70%)',
+            animationDuration: '10s',
+            animationDelay: '2s'
+          }} 
+        />
+        <div 
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full blur-3xl opacity-15 animate-pulse"
+          style={{ 
+            background: 'radial-gradient(circle, rgba(1,122,255,0.2) 0%, transparent 60%)',
+            animationDuration: '12s',
+            animationDelay: '4s'
+          }} 
+        />
+      </div>
 
       {/* Mute button - top right */}
       <div className="absolute top-4 right-4 z-30 flex items-center gap-2">
