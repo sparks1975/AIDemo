@@ -49,32 +49,57 @@ const ALOHA_BLUE = '#017AFF';
 function BadgeComponent({ badge }: { badge: Badge }) {
   const Icon = iconMap[badge.icon] || CheckCircle;
   
-  const iconColors = {
-    default: 'text-[#4D4D4D]',
-    success: 'text-emerald-500',
-    warning: 'text-amber-500',
-    info: 'text-[#017AFF]',
+  const colorStyles = {
+    default: {
+      iconBg: 'rgba(142, 142, 147, 0.12)',
+      iconColor: '#8E8E93',
+    },
+    success: {
+      iconBg: 'rgba(52, 199, 89, 0.12)',
+      iconColor: '#34C759',
+    },
+    warning: {
+      iconBg: 'rgba(255, 149, 0, 0.12)',
+      iconColor: '#FF9500',
+    },
+    info: {
+      iconBg: 'rgba(1, 122, 255, 0.12)',
+      iconColor: '#017AFF',
+    },
   };
+
+  const colors = colorStyles[badge.color];
 
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ type: 'spring', damping: 25, stiffness: 350 }}
-      className="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white shadow-sm border border-[#D9D9D9] w-72"
+      initial={{ opacity: 0, y: 8, scale: 0.98 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ type: 'spring', damping: 28, stiffness: 380 }}
+      className="flex items-center gap-3 px-3.5 py-2.5 rounded-2xl w-72"
+      style={{
+        background: 'rgba(255, 255, 255, 0.72)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        boxShadow: '0 0.5px 0 0 rgba(0,0,0,0.04), 0 1px 3px 0 rgba(0,0,0,0.06)',
+      }}
       data-testid={`badge-${badge.id}`}
     >
-      <div className={cn('flex-shrink-0', iconColors[badge.color])}>
-        <Icon className="w-5 h-5" />
+      <div 
+        className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center"
+        style={{ backgroundColor: colors.iconBg }}
+      >
+        <Icon className="w-4 h-4" style={{ color: colors.iconColor }} />
       </div>
-      <div className="flex flex-col min-w-0 flex-1">
-        <span className="text-[10px] font-medium text-[#4D4D4D] uppercase tracking-wider leading-tight">{badge.label}</span>
+      <div className="flex flex-col min-w-0 flex-1 gap-0.5">
+        <span className="text-[11px] font-medium leading-tight" style={{ color: '#86868B' }}>{badge.label}</span>
         <motion.span 
           key={badge.value}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="text-sm font-semibold text-black leading-tight truncate"
+          transition={{ duration: 0.2 }}
+          className="text-[13px] font-semibold leading-tight truncate" 
+          style={{ color: '#1D1D1F' }}
         >
           {badge.value}
         </motion.span>
@@ -385,7 +410,7 @@ export default function DemoPage() {
                   "w-14 h-14 rounded-full shadow-lg border-0 text-white transition-all",
                   (isLoading || showStartingState) && "opacity-50 cursor-not-allowed"
                 )}
-                style={{ backgroundColor: '#14B8A6' }}
+                style={{ backgroundColor: ALOHA_BLUE }}
                 data-testid="button-play-pause"
               >
                 {isLoading || showStartingState ? (
