@@ -101,9 +101,9 @@ export default function DemoPage() {
     setDebugLog(prev => [...prev.slice(-10), `${timestamp}: ${msg}`]);
   };
 
-  // Only show content when audio time is actually advancing (not stuck at 0)
-  // This detects when audio is truly playing, not just when the browser says it is
-  const showContent = audioActuallyPlaying && currentTime > 0.1;
+  // audioActuallyPlaying is now only true when currentTime has advanced
+  // So we can trust it directly
+  const showContent = audioActuallyPlaying;
   
   const currentBadges = showContent ? getBadgesAtTime(currentTime) : [];
   
@@ -123,11 +123,10 @@ export default function DemoPage() {
       setIsLoading(false);
     };
 
-    // THIS IS THE KEY: only show UI when audio is ACTUALLY playing
+    // Don't trust "playing" event - it fires before audio actually outputs
     const handlePlaying = () => {
-      addDebug(`playing! time=${audio.currentTime.toFixed(2)} readyState=${audio.readyState} networkState=${audio.networkState}`);
-      setIsStarting(false);
-      setAudioActuallyPlaying(true);
+      addDebug(`playing! time=${audio.currentTime.toFixed(2)} (waiting for time to advance)`);
+      // Don't set audioActuallyPlaying here - wait for timeupdate
     };
     
     // Additional events to track buffering issues
@@ -143,14 +142,17 @@ export default function DemoPage() {
     audio.addEventListener('stalled', handleStalled);
 
     // Update time from the actual audio element
-    let lastLoggedTime = -1;
+    // This is the ONLY reliable way to know audio is truly playing
+    let hasStarted = false;
     const handleTimeUpdate = () => {
       const t = audio.currentTime;
-      // Log first time we see time > 0
-      if (lastLoggedTime < 0.1 && t >= 0.1) {
-        addDebug(`timeupdate: first real time = ${t.toFixed(2)}`);
+      // Only set audioActuallyPlaying when time actually advances
+      if (!hasStarted && t > 0.05) {
+        hasStarted = true;
+        addDebug(`AUDIO STARTED! time=${t.toFixed(2)}`);
+        setIsStarting(false);
+        setAudioActuallyPlaying(true);
       }
-      lastLoggedTime = t;
       setCurrentTime(t);
     };
 
