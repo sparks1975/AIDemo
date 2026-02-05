@@ -64,11 +64,11 @@ export const badgeUpdates: BadgeUpdate[] = [
   { badgeId: 'patient', icon: 'user', label: 'Patient', value: 'Megan Jones • 09/22/1995', timestamp: 42.518, color: 'success' },
   
   // Appointment badge - after AI lists slots
-  { badgeId: 'appointment', icon: 'calendar', label: 'Appointment', value: 'Thu Oct 9: 9:00, 9:15, 9:30 AM', timestamp: 60.627, color: 'info' },
+  { badgeId: 'appointment', icon: 'calendar', label: 'Appointment', value: 'Thursday, October 9th', timestamp: 60.627, color: 'info' },
   // After caller picks 9:30
-  { badgeId: 'appointment', icon: 'calendar', label: 'Appointment', value: 'Thu Oct 9 @ 9:30 AM', timestamp: 71.772, color: 'info' },
+  { badgeId: 'appointment', icon: 'calendar', label: 'Appointment', value: 'Thu, Oct 9 @ 9:30 AM', timestamp: 71.772, color: 'info' },
   // After AI confirms booking
-  { badgeId: 'appointment', icon: 'calendar-check', label: 'Appointment', value: 'Booked: Thu Oct 9 @ 9:30 AM', timestamp: 74.932, color: 'success' },
+  { badgeId: 'appointment', icon: 'calendar-check', label: 'Appointment', value: 'Booked: Thu, Oct 9 @ 9:30 AM', timestamp: 74.932, color: 'success' },
   
   // Call complete
   { badgeId: 'call', icon: 'check-circle', label: 'Call Status', value: 'Complete', timestamp: 97, color: 'success' },
