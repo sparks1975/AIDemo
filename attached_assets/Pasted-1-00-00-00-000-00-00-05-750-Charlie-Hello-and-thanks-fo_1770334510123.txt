@@ -1,0 +1,67 @@
+1
+00:00:00,000 --> 00:00:05,750
+Charlie: Hello and thanks for calling Aloha. My name is Charlie, the AI receptionist. How can I help you today?
+
+2
+00:00:05,780 --> 00:00:13,250
+Megan: Hi Charlie, my name's Megan. I'm new to town and I'm looking for a new chiropractor. Are you guys accepting new patients?
+
+3
+00:00:13,300 --> 00:00:19,450
+Charlie: Yes, we are accepting new patients. I can help you schedule an appointment. May I have your last name, please?
+
+4
+00:00:19,480 --> 00:00:20,550
+Megan: Yes, it's Jones.
+
+5
+00:00:20,620 --> 00:00:26,480
+Charlie: Thank you. That's Jones, spelled J-O-N-E-S, correct?
+
+6
+00:00:26,520 --> 00:00:27,550
+Megan: Yeah, you got it.
+
+7
+00:00:27,620 --> 00:00:30,450
+Charlie: Great. Could you please provide your date of birth?
+
+8
+00:00:30,550 --> 00:00:34,050
+Megan: September 22nd, 1995.
+
+9
+00:00:34,150 --> 00:00:43,150
+Charlie: Thank you. Just to confirm, your date of birth is September 22nd, 1995. Is that correct?
+
+10
+00:00:43,210 --> 00:00:43,850
+Megan: Yes.
+
+11
+00:00:43,950 --> 00:00:52,950
+Charlie: Thank you for your patience. We can proceed with scheduling your appointment. Do you have a specific date in mind, or would you like me to look for the earliest available time?
+
+12
+00:00:53,250 --> 00:01:00,050
+Megan: I'm usually free Thursdays and Fridays, so how about let's check this Thursday?
+
+13
+00:01:00,250 --> 00:01:11,850
+Charlie: We have some available slots for this Thursday, October 9th. Here are a few options: 9:00 in the morning, 9:15 in the morning, 9:30 in the morning. Do any of these times work for you?
+
+14
+00:01:11,920 --> 00:01:14,650
+Megan: 9:30 should work, yeah.
+
+15
+00:01:14,820 --> 00:01:26,350
+Charlie: Your appointment is successfully scheduled for Thursday, October the 9th at 9:30 in the morning. Is there anything else I can assist you with today?
+
+16
+00:01:26,450 --> 00:01:29,650
+Megan: No, that was everything. Thank you so much.
+
+17
+00:01:29,820 --> 00:01:36,520
+Charlie: You're welcome. Have a great day and we look forward to seeing you soon. Goodbye.
