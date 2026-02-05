@@ -94,9 +94,12 @@ export default function DemoPage() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioBlobUrl = useRef<string | null>(null);
 
-  const currentBadges = isAudioPlaying ? getBadgesAtTime(currentTime) : [];
+  // Only show content when audio time is actually advancing (not 0)
+  const audioHasStarted = isAudioPlaying && currentTime > 0.1;
   
-  const currentMessage = isAudioPlaying 
+  const currentBadges = audioHasStarted ? getBadgesAtTime(currentTime) : [];
+  
+  const currentMessage = audioHasStarted 
     ? demoConversation.filter(m => m.timestamp <= currentTime).pop()
     : null;
 
@@ -282,8 +285,8 @@ export default function DemoPage() {
       <main className="flex-1 flex flex-col items-center justify-end relative z-10 px-4 pb-8">
         <div className="flex-1" />
         
-        {/* Title - show when audio is not playing */}
-        {!isAudioPlaying && !isComplete && (
+        {/* Title - show when audio hasn't actually started */}
+        {!audioHasStarted && !isComplete && (
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -309,8 +312,8 @@ export default function DemoPage() {
           </motion.div>
         )}
         
-        {/* Badges - only when audio is ACTUALLY playing */}
-        {isAudioPlaying && !isComplete && (
+        {/* Badges - only when audio has actually started */}
+        {audioHasStarted && !isComplete && (
           <div className="flex flex-col items-center gap-2 mb-6 px-4 min-h-[180px] justify-end">
             <AnimatePresence>
               {currentBadges.map(badge => (
@@ -320,8 +323,8 @@ export default function DemoPage() {
           </div>
         )}
         
-        {/* Transcript - only when audio is ACTUALLY playing */}
-        {isAudioPlaying && !isComplete && (
+        {/* Transcript - only when audio has actually started */}
+        {audioHasStarted && !isComplete && (
           <div className="w-full px-4 mb-6 min-h-[80px] flex items-center justify-center">
             <AnimatePresence mode="wait">
               {currentMessage && (
@@ -394,7 +397,7 @@ export default function DemoPage() {
                   <Play className="w-6 h-6 ml-0.5" />
                 )}
               </Button>
-              {isAudioPlaying && (
+              {audioHasStarted && (
                 <Button 
                   variant="ghost" 
                   onClick={handleSkip}
