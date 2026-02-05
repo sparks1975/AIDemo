@@ -385,7 +385,7 @@ export default function DemoPage() {
                   "w-14 h-14 rounded-full shadow-lg border-0 text-white transition-all",
                   (isLoading || showStartingState) && "opacity-50 cursor-not-allowed"
                 )}
-                style={{ backgroundColor: '#EF4444' }}
+                style={{ backgroundColor: '#22C55E' }}
                 data-testid="button-play-pause"
               >
                 {isLoading || showStartingState ? (
