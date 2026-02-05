@@ -43,41 +43,27 @@ const iconMap: Record<string, React.ElementType> = {
   'smartphone': Smartphone,
 };
 
+// Aloha brand colors
+const ALOHA_BLUE = '#017AFF';
+
 function StatusCardComponent({ card }: { card: StatusCard }) {
   const Icon = iconMap[card.icon] || CheckCircle;
   
-  const colorClasses = {
-    default: 'bg-slate-800/80 border-slate-700/50',
-    success: 'bg-slate-800/80 border-emerald-500/40',
-    warning: 'bg-slate-800/80 border-amber-500/40',
-    info: 'bg-slate-800/80 border-violet-500/40',
-  };
-
-  const iconColorClasses = {
-    default: 'text-slate-400',
-    success: 'text-emerald-400',
-    warning: 'text-amber-400',
-    info: 'text-violet-400',
-  };
-
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20, scale: 0.9 }}
+      initial={{ opacity: 0, y: 15, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ type: 'spring', damping: 25, stiffness: 350 }}
-      className={cn(
-        'flex items-center gap-2 px-3 py-2 rounded-lg border backdrop-blur-md shadow-lg',
-        colorClasses[card.color || 'default']
-      )}
+      className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white shadow-md border border-[#D9D9D9]"
       data-testid={`status-card-${card.id}`}
     >
-      <div className={cn('flex-shrink-0', iconColorClasses[card.color || 'default'])}>
+      <div className="flex-shrink-0 text-[#017AFF]">
         <Icon className="w-4 h-4" />
       </div>
       <div className="flex flex-col min-w-0">
-        <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wide leading-tight">{card.label}</span>
-        <span className="text-xs font-semibold text-white leading-tight">{card.value}</span>
+        <span className="text-[10px] font-medium text-[#4D4D4D] uppercase tracking-wide leading-tight">{card.label}</span>
+        <span className="text-xs font-semibold text-black leading-tight">{card.value}</span>
       </div>
     </motion.div>
   );
@@ -168,21 +154,15 @@ export default function DemoPage() {
   }, [isMuted]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-violet-950 flex flex-col relative overflow-hidden">
+    <div className="min-h-screen bg-[#F5F5F5] flex flex-col relative overflow-hidden">
       <audio ref={audioRef} src="/audio/demo-call.mp3" preload="auto" />
-      
-      {/* Background gradient orbs */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 -left-20 w-96 h-96 bg-violet-600/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl" />
-      </div>
 
       {/* Mute button - top right */}
       <div className="absolute top-4 right-4 z-30 flex items-center gap-2">
         <Button 
           variant="ghost" 
           size="icon"
-          className="text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-full"
+          className="text-[#4D4D4D] hover:text-black hover:bg-white/80 rounded-full"
           onClick={toggleMute}
           data-testid="button-mute"
         >
@@ -191,7 +171,7 @@ export default function DemoPage() {
         <Button 
           variant="ghost" 
           size="sm" 
-          className="text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-full text-xs"
+          className="text-[#4D4D4D] hover:text-black hover:bg-white/80 rounded-full text-xs"
           asChild
           data-testid="button-embed-info"
         >
@@ -210,21 +190,24 @@ export default function DemoPage() {
             className="flex flex-col items-center text-center max-w-lg"
           >
             <div className="relative mb-8">
-              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-2xl shadow-purple-500/40">
+              <div 
+                className="w-24 h-24 rounded-full flex items-center justify-center shadow-lg"
+                style={{ backgroundColor: ALOHA_BLUE }}
+              >
                 <Phone className="w-12 h-12 text-white" />
               </div>
-              <div className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center border-4 border-slate-900 shadow-lg">
+              <div className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center border-4 border-[#F5F5F5] shadow-md">
                 <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
               </div>
             </div>
             
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
+            <h1 className="text-3xl md:text-4xl font-extrabold text-black mb-3" style={{ lineHeight: 1.2 }}>
               Hear Charlie in Action
             </h1>
-            <p className="text-slate-400 mb-2">
+            <p className="text-[#4D4D4D] mb-2">
               For the full experience, ensure your volume is on.
             </p>
-            <p className="text-sm text-violet-400 mb-8 flex items-center gap-2">
+            <p className="text-sm mb-8 flex items-center gap-2" style={{ color: ALOHA_BLUE }}>
               <Volume2 className="w-4 h-4" />
               This audio has NOT been edited.
             </p>
@@ -232,7 +215,8 @@ export default function DemoPage() {
             <Button 
               size="lg" 
               onClick={handlePlay}
-              className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white text-lg px-8 py-6 rounded-full shadow-xl shadow-purple-500/30 border-0"
+              className="text-white text-lg px-8 py-6 rounded-full shadow-lg border-0"
+              style={{ backgroundColor: ALOHA_BLUE }}
               data-testid="button-start-demo"
             >
               <Play className="w-6 h-6 mr-2" />
@@ -266,7 +250,8 @@ export default function DemoPage() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.3 }}
-                    className="text-base md:text-lg text-white/90 text-center leading-relaxed max-w-2xl"
+                    className="text-base md:text-lg text-black text-center leading-relaxed max-w-2xl"
+                    style={{ lineHeight: 1.5 }}
                   >
                     {currentMessage.text}
                   </motion.p>
@@ -279,19 +264,20 @@ export default function DemoPage() {
               <Button 
                 size="lg" 
                 onClick={handlePlay}
-                className="w-12 h-12 rounded-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 shadow-xl shadow-purple-500/30 border-0"
+                className="w-12 h-12 rounded-full shadow-lg border-0 text-white"
+                style={{ backgroundColor: ALOHA_BLUE }}
                 data-testid="button-play-pause"
               >
                 {isPlaying ? (
-                  <Pause className="w-5 h-5 text-white" />
+                  <Pause className="w-5 h-5" />
                 ) : (
-                  <Play className="w-5 h-5 text-white ml-0.5" />
+                  <Play className="w-5 h-5 ml-0.5" />
                 )}
               </Button>
               <Button 
                 variant="ghost" 
                 onClick={handleSkip}
-                className="text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-full px-6"
+                className="text-[#4D4D4D] hover:text-black hover:bg-white/80 rounded-full px-6"
                 data-testid="button-skip"
               >
                 <SkipForward className="w-4 h-4 mr-2" />
@@ -308,20 +294,20 @@ export default function DemoPage() {
             animate={{ opacity: 1, scale: 1 }}
             className="flex flex-col items-center text-center"
           >
-            <div className="w-20 h-20 rounded-full bg-emerald-500/20 flex items-center justify-center mb-6 border border-emerald-500/30">
-              <CheckCircle className="w-10 h-10 text-emerald-400" />
+            <div className="w-20 h-20 rounded-full bg-emerald-50 flex items-center justify-center mb-6 border border-emerald-200">
+              <CheckCircle className="w-10 h-10 text-emerald-500" />
             </div>
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
+            <h2 className="text-2xl md:text-3xl font-extrabold text-black mb-3" style={{ lineHeight: 1.2 }}>
               Sound effective?
             </h2>
-            <p className="text-slate-400 mb-8">
+            <p className="text-[#4D4D4D] mb-8">
               Want to see behind the curtain?
             </p>
             <div className="flex gap-4">
               <Button
                 onClick={handleReplay}
                 variant="outline"
-                className="border-slate-700 text-white hover:bg-slate-800 rounded-full px-6"
+                className="border-[#D9D9D9] text-black hover:bg-white rounded-full px-6"
                 data-testid="button-replay"
               >
                 <RotateCcw className="w-4 h-4 mr-2" />

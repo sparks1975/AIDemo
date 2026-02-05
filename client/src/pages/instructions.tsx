@@ -53,36 +53,36 @@ function closeDemo() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950/50 to-slate-950 text-white p-6 md:p-12">
+    <div className="min-h-screen bg-[#F5F5F5] p-6 md:p-12">
       <div className="max-w-4xl mx-auto">
         <div className="mb-12 text-center">
-          <h1 className="text-4xl font-bold mb-4">Embed the AI Demo</h1>
-          <p className="text-lg text-white/60">
+          <h1 className="text-4xl font-extrabold text-black mb-4" style={{ lineHeight: 1.2 }}>Embed the AI Demo</h1>
+          <p className="text-lg text-[#4D4D4D]">
             Add this interactive demo to your WordPress site or any webpage
           </p>
         </div>
 
         <div className="space-y-8">
           {/* Direct link */}
-          <Card className="bg-white/5 border-white/10">
+          <Card className="bg-white border-[#D9D9D9]">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-white">
+              <CardTitle className="flex items-center gap-2 text-black">
                 <ExternalLink className="w-5 h-5" />
                 Direct Link
               </CardTitle>
-              <CardDescription className="text-white/50">
+              <CardDescription className="text-[#4D4D4D]">
                 Share this link directly or open in a new tab
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-2">
-                <code className="flex-1 bg-black/30 p-3 rounded-md text-sm break-all text-white/80 border border-white/10">
+                <code className="flex-1 bg-[#F5F5F5] p-3 rounded-md text-sm break-all text-black border border-[#D9D9D9]">
                   {baseUrl}
                 </code>
                 <Button
                   variant="outline"
                   size="icon"
-                  className="border-white/20 text-white hover:bg-white/10"
+                  className="border-[#D9D9D9] text-black hover:bg-[#F5F5F5]"
                   onClick={() => copyToClipboard(baseUrl, 'link')}
                   data-testid="button-copy-link"
                 >
@@ -93,25 +93,25 @@ function closeDemo() {
           </Card>
 
           {/* Simple iframe embed */}
-          <Card className="bg-white/5 border-white/10">
+          <Card className="bg-white border-[#D9D9D9]">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-white">
+              <CardTitle className="flex items-center gap-2 text-black">
                 <Code className="w-5 h-5" />
                 Simple Embed (iframe)
               </CardTitle>
-              <CardDescription className="text-white/50">
+              <CardDescription className="text-[#4D4D4D]">
                 Paste this code into any HTML page or WordPress HTML block
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="relative">
-                <pre className="bg-black/30 p-4 rounded-md text-sm overflow-x-auto text-white/80 border border-white/10">
+                <pre className="bg-[#F5F5F5] p-4 rounded-md text-sm overflow-x-auto text-black border border-[#D9D9D9]">
                   <code>{iframeCode}</code>
                 </pre>
                 <Button
                   variant="outline"
                   size="icon"
-                  className="absolute top-2 right-2 border-white/20 text-white hover:bg-white/10"
+                  className="absolute top-2 right-2 border-[#D9D9D9] text-black hover:bg-white"
                   onClick={() => copyToClipboard(iframeCode, 'iframe')}
                   data-testid="button-copy-iframe"
                 >
@@ -122,25 +122,25 @@ function closeDemo() {
           </Card>
 
           {/* Button + Modal embed */}
-          <Card className="bg-white/5 border-white/10">
+          <Card className="bg-white border-[#D9D9D9]">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-white">
+              <CardTitle className="flex items-center gap-2 text-black">
                 <Code className="w-5 h-5" />
                 Button Launcher with Modal
               </CardTitle>
-              <CardDescription className="text-white/50">
+              <CardDescription className="text-[#4D4D4D]">
                 Creates a button that opens the demo in a modal overlay - perfect for hero sections
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="relative">
-                <pre className="bg-black/30 p-4 rounded-md text-sm overflow-x-auto max-h-96 text-white/80 border border-white/10">
+                <pre className="bg-[#F5F5F5] p-4 rounded-md text-sm overflow-x-auto max-h-96 text-black border border-[#D9D9D9]">
                   <code>{buttonCode}</code>
                 </pre>
                 <Button
                   variant="outline"
                   size="icon"
-                  className="absolute top-2 right-2 border-white/20 text-white hover:bg-white/10"
+                  className="absolute top-2 right-2 border-[#D9D9D9] text-black hover:bg-white"
                   onClick={() => copyToClipboard(buttonCode, 'button')}
                   data-testid="button-copy-modal"
                 >
@@ -151,13 +151,13 @@ function closeDemo() {
           </Card>
 
           {/* WordPress instructions */}
-          <Card className="bg-white/5 border-white/10">
+          <Card className="bg-white border-[#D9D9D9]">
             <CardHeader>
-              <CardTitle className="text-white">WordPress Instructions</CardTitle>
+              <CardTitle className="text-black">WordPress Instructions</CardTitle>
             </CardHeader>
-            <CardContent className="text-white/70 space-y-4">
+            <CardContent className="text-[#4D4D4D] space-y-4">
               <div>
-                <strong className="text-white">For Gutenberg (Block Editor):</strong>
+                <strong className="text-black">For Gutenberg (Block Editor):</strong>
                 <ul className="mt-2 list-disc pl-5 space-y-1 text-sm">
                   <li>Add a "Custom HTML" block</li>
                   <li>Paste either the iframe code or the button launcher code</li>
@@ -165,7 +165,7 @@ function closeDemo() {
                 </ul>
               </div>
               <div>
-                <strong className="text-white">For Classic Editor:</strong>
+                <strong className="text-black">For Classic Editor:</strong>
                 <ul className="mt-2 list-disc pl-5 space-y-1 text-sm">
                   <li>Switch to "Text" mode (not Visual)</li>
                   <li>Paste the code where you want the demo to appear</li>
@@ -173,7 +173,7 @@ function closeDemo() {
                 </ul>
               </div>
               <div>
-                <strong className="text-white">For Elementor:</strong>
+                <strong className="text-black">For Elementor:</strong>
                 <ul className="mt-2 list-disc pl-5 space-y-1 text-sm">
                   <li>Add an HTML widget</li>
                   <li>Paste the code</li>
@@ -188,7 +188,8 @@ function closeDemo() {
             <Button 
               asChild 
               size="lg" 
-              className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white shadow-lg shadow-purple-500/30 border-0"
+              className="text-white shadow-lg border-0"
+              style={{ backgroundColor: '#017AFF' }}
               data-testid="button-view-demo"
             >
               <a href="/">View the Demo</a>
