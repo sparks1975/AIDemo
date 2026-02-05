@@ -101,11 +101,20 @@ export default function DemoPage() {
     setDebugLog(prev => [...prev.slice(-10), `${timestamp}: ${msg}`]);
   };
 
-  // Only show content when audio is ACTUALLY playing (playing event fired)
-  const currentBadges = audioActuallyPlaying ? getBadgesAtTime(currentTime) : [];
+  // Audio output latency compensation - UI appears this many seconds AFTER audio time
+  // This accounts for the delay between browser playing audio and sound reaching speakers
+  const LATENCY_OFFSET = 1.5;
   
-  const currentMessage = audioActuallyPlaying 
-    ? demoConversation.filter(m => m.timestamp <= currentTime).pop()
+  // Adjusted time for UI display (audio time minus latency = what user is actually hearing)
+  const displayTime = Math.max(0, currentTime - LATENCY_OFFSET);
+  
+  // Only show content when audio is ACTUALLY playing AND after latency offset
+  const showContent = audioActuallyPlaying && currentTime >= LATENCY_OFFSET;
+  
+  const currentBadges = showContent ? getBadgesAtTime(displayTime) : [];
+  
+  const currentMessage = showContent 
+    ? demoConversation.filter(m => m.timestamp <= displayTime).pop()
     : null;
 
   // Set up audio element
@@ -218,8 +227,8 @@ export default function DemoPage() {
     }
   }, [isMuted]);
 
-  // Show starting state between click and actual playback
-  const showStartingState = isStarting && !audioActuallyPlaying;
+  // Show starting state between click and content appearing (includes latency wait)
+  const showStartingState = (isStarting && !audioActuallyPlaying) || (audioActuallyPlaying && !showContent);
 
   return (
     <div className="min-h-screen bg-[#F5F5F5] flex flex-col relative overflow-hidden">
@@ -284,8 +293,8 @@ export default function DemoPage() {
       <main className="flex-1 flex flex-col items-center justify-end relative z-10 px-4 pb-8">
         <div className="flex-1" />
         
-        {/* Title - show when not started */}
-        {!audioActuallyPlaying && !isComplete && !showStartingState && (
+        {/* Title - show when not showing content */}
+        {!showContent && !isComplete && !showStartingState && (
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -334,8 +343,8 @@ export default function DemoPage() {
           </motion.div>
         )}
         
-        {/* Badges - only when audio is ACTUALLY playing */}
-        {audioActuallyPlaying && !isComplete && (
+        {/* Badges - only after latency offset */}
+        {showContent && !isComplete && (
           <div className="flex flex-col items-center gap-2 mb-6 px-4 min-h-[180px] justify-end">
             <AnimatePresence>
               {currentBadges.map(badge => (
@@ -345,8 +354,8 @@ export default function DemoPage() {
           </div>
         )}
         
-        {/* Transcript - only when audio is ACTUALLY playing */}
-        {audioActuallyPlaying && !isComplete && (
+        {/* Transcript - only after latency offset */}
+        {showContent && !isComplete && (
           <div className="w-full px-4 mb-6 min-h-[80px] flex items-center justify-center">
             <AnimatePresence mode="wait">
               {currentMessage && (
@@ -419,7 +428,7 @@ export default function DemoPage() {
                   <Play className="w-6 h-6 ml-0.5" />
                 )}
               </Button>
-              {audioActuallyPlaying && (
+              {showContent && (
                 <Button 
                   variant="ghost" 
                   onClick={handleSkip}
