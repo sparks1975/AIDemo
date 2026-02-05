@@ -92,11 +92,12 @@ export default function DemoPage() {
   const [isAudioLoaded, setIsAudioLoaded] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const currentBadges = getBadgesAtTime(currentTime);
+  // Only show badges/transcript if audio has started playing
+  const currentBadges = hasStarted ? getBadgesAtTime(currentTime) : [];
   
-  const currentMessage = demoConversation
-    .filter(m => m.timestamp <= currentTime)
-    .pop();
+  const currentMessage = hasStarted 
+    ? demoConversation.filter(m => m.timestamp <= currentTime).pop()
+    : null;
 
   // Preload audio on mount
   useEffect(() => {
@@ -134,7 +135,7 @@ export default function DemoPage() {
 
   const handlePlay = useCallback(() => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || !isAudioLoaded) return;
 
     if (!hasStarted) {
       setHasStarted(true);
@@ -147,7 +148,7 @@ export default function DemoPage() {
       audio.play();
       setIsPlaying(true);
     }
-  }, [isPlaying, hasStarted]);
+  }, [isPlaying, hasStarted, isAudioLoaded]);
 
   const handleSkip = useCallback(() => {
     const audio = audioRef.current;
@@ -211,7 +212,7 @@ export default function DemoPage() {
         />
       </div>
 
-      {/* Mute button - top right */}
+      {/* Top bar */}
       <div className="absolute top-4 right-4 z-30 flex items-center gap-2">
         <Button 
           variant="ghost" 
@@ -233,121 +234,65 @@ export default function DemoPage() {
         </Button>
       </div>
 
-      {/* Main content area */}
-      <main className="flex-1 flex flex-col items-center justify-center relative z-10 px-4">
+      {/* Main content - single screen layout */}
+      <main className="flex-1 flex flex-col items-center justify-end relative z-10 px-4 pb-8">
+        {/* Spacer to push content down */}
+        <div className="flex-1" />
         
-        {/* Pre-start state */}
+        {/* Title - show when not started */}
         {!hasStarted && (
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex flex-col items-center text-center max-w-lg"
+            className="flex flex-col items-center text-center mb-8"
           >
-            <div className="relative mb-8">
+            <div className="relative mb-6">
               <div 
-                className="w-24 h-24 rounded-full flex items-center justify-center shadow-lg"
+                className="w-20 h-20 rounded-full flex items-center justify-center shadow-lg"
                 style={{ backgroundColor: ALOHA_BLUE }}
               >
-                <Phone className="w-12 h-12 text-white" />
-              </div>
-              <div className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center border-4 border-[#F5F5F5] shadow-md">
-                <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
+                <Phone className="w-10 h-10 text-white" />
               </div>
             </div>
             
-            <h1 className="text-3xl md:text-4xl font-extrabold text-black mb-3" style={{ lineHeight: 1.2 }}>
+            <h1 className="text-2xl md:text-3xl font-extrabold text-black mb-2" style={{ lineHeight: 1.2 }}>
               Hear Charlie in Action
             </h1>
-            <p className="text-[#4D4D4D] mb-2">
-              For the full experience, ensure your volume is on.
+            <p className="text-[#4D4D4D] text-sm">
+              Press play to hear an actual AI call
             </p>
-            <p className="text-sm mb-8 flex items-center gap-2" style={{ color: ALOHA_BLUE }}>
-              <Volume2 className="w-4 h-4" />
-              This audio has NOT been edited.
-            </p>
-            
-            <Button 
-              size="lg" 
-              onClick={handlePlay}
-              disabled={!isAudioLoaded}
-              className="text-white text-lg px-8 py-6 rounded-full shadow-lg border-0 disabled:opacity-50"
-              style={{ backgroundColor: ALOHA_BLUE }}
-              data-testid="button-start-demo"
-            >
-              {isAudioLoaded ? (
-                <>
-                  <Play className="w-6 h-6 mr-2" />
-                  See it in Action
-                </>
-              ) : (
-                <>
-                  <div className="w-5 h-5 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Loading...
-                </>
-              )}
-            </Button>
           </motion.div>
         )}
-
-        {/* Playing state */}
+        
+        {/* Badges - centered, stacked vertically (only show after started) */}
         {hasStarted && !isComplete && (
-          <div className="flex flex-col items-center justify-end flex-1 w-full max-w-3xl mx-auto pb-8">
-            {/* Spacer to push content down */}
-            <div className="flex-1" />
-            
-            {/* Badges - centered, stacked vertically */}
-            <div className="flex flex-col items-center gap-2 mb-6 px-4">
-              <AnimatePresence>
-                {currentBadges.map(badge => (
-                  <BadgeComponent key={badge.id} badge={badge} />
-                ))}
-              </AnimatePresence>
-            </div>
-            
-            {/* Current transcript line - centered at bottom, smaller text */}
-            <div className="w-full px-4 mb-6 min-h-[80px] flex items-center justify-center">
-              <AnimatePresence mode="wait">
-                {currentMessage && (
-                  <motion.p
-                    key={currentMessage.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.3 }}
-                    className="text-base md:text-lg text-black text-center leading-relaxed max-w-2xl"
-                    style={{ lineHeight: 1.5 }}
-                  >
-                    {currentMessage.text}
-                  </motion.p>
-                )}
-              </AnimatePresence>
-            </div>
-
-            {/* Controls */}
-            <div className="flex items-center gap-4">
-              <Button 
-                size="lg" 
-                onClick={handlePlay}
-                className="w-12 h-12 rounded-full shadow-lg border-0 text-white"
-                style={{ backgroundColor: ALOHA_BLUE }}
-                data-testid="button-play-pause"
-              >
-                {isPlaying ? (
-                  <Pause className="w-5 h-5" />
-                ) : (
-                  <Play className="w-5 h-5 ml-0.5" />
-                )}
-              </Button>
-              <Button 
-                variant="ghost" 
-                onClick={handleSkip}
-                className="text-[#4D4D4D] hover:text-black hover:bg-white/80 rounded-full px-6"
-                data-testid="button-skip"
-              >
-                <SkipForward className="w-4 h-4 mr-2" />
-                Skip Demo
-              </Button>
-            </div>
+          <div className="flex flex-col items-center gap-2 mb-6 px-4 min-h-[180px] justify-end">
+            <AnimatePresence>
+              {currentBadges.map(badge => (
+                <BadgeComponent key={badge.id} badge={badge} />
+              ))}
+            </AnimatePresence>
+          </div>
+        )}
+        
+        {/* Current transcript line (only show after started) */}
+        {hasStarted && !isComplete && (
+          <div className="w-full px-4 mb-6 min-h-[80px] flex items-center justify-center">
+            <AnimatePresence mode="wait">
+              {currentMessage && (
+                <motion.p
+                  key={currentMessage.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.3 }}
+                  className="text-base md:text-lg text-black text-center leading-relaxed max-w-2xl"
+                  style={{ lineHeight: 1.5 }}
+                >
+                  {currentMessage.text}
+                </motion.p>
+              )}
+            </AnimatePresence>
           </div>
         )}
 
@@ -356,30 +301,65 @@ export default function DemoPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="flex flex-col items-center text-center"
+            className="flex flex-col items-center text-center mb-8"
           >
-            <div className="w-20 h-20 rounded-full bg-emerald-50 flex items-center justify-center mb-6 border border-emerald-200">
-              <CheckCircle className="w-10 h-10 text-emerald-500" />
+            <div className="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center mb-4 border border-emerald-200">
+              <CheckCircle className="w-8 h-8 text-emerald-500" />
             </div>
-            <h2 className="text-2xl md:text-3xl font-extrabold text-black mb-3" style={{ lineHeight: 1.2 }}>
+            <h2 className="text-xl md:text-2xl font-extrabold text-black mb-2" style={{ lineHeight: 1.2 }}>
               Sound effective?
             </h2>
-            <p className="text-[#4D4D4D] mb-8">
+            <p className="text-[#4D4D4D] text-sm">
               Want to see behind the curtain?
             </p>
-            <div className="flex gap-4">
-              <Button
-                onClick={handleReplay}
-                variant="outline"
-                className="border-[#D9D9D9] text-black hover:bg-white rounded-full px-6"
-                data-testid="button-replay"
-              >
-                <RotateCcw className="w-4 h-4 mr-2" />
-                Replay Demo
-              </Button>
-            </div>
           </motion.div>
         )}
+
+        {/* Controls - always at bottom */}
+        <div className="flex items-center gap-4">
+          {isComplete ? (
+            <Button
+              onClick={handleReplay}
+              size="lg"
+              className="rounded-full px-6 text-white border-0"
+              style={{ backgroundColor: ALOHA_BLUE }}
+              data-testid="button-replay"
+            >
+              <RotateCcw className="w-4 h-4 mr-2" />
+              Replay Demo
+            </Button>
+          ) : (
+            <>
+              <Button 
+                size="lg" 
+                onClick={handlePlay}
+                disabled={!isAudioLoaded}
+                className="w-14 h-14 rounded-full shadow-lg border-0 text-white disabled:opacity-50"
+                style={{ backgroundColor: ALOHA_BLUE }}
+                data-testid="button-play-pause"
+              >
+                {!isAudioLoaded ? (
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : isPlaying ? (
+                  <Pause className="w-6 h-6" />
+                ) : (
+                  <Play className="w-6 h-6 ml-0.5" />
+                )}
+              </Button>
+              {hasStarted && (
+                <Button 
+                  variant="ghost" 
+                  onClick={handleSkip}
+                  className="text-[#4D4D4D] hover:text-black hover:bg-white/80 rounded-full px-6"
+                  data-testid="button-skip"
+                >
+                  <SkipForward className="w-4 h-4 mr-2" />
+                  Skip
+                </Button>
+              )}
+            </>
+          )}
+        </div>
       </main>
     </div>
   );
