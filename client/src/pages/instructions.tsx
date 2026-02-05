@@ -53,35 +53,36 @@ function closeDemo() {
   };
 
   return (
-    <div className="min-h-screen bg-background p-6 md:p-12">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950/50 to-slate-950 text-white p-6 md:p-12">
       <div className="max-w-4xl mx-auto">
         <div className="mb-12 text-center">
           <h1 className="text-4xl font-bold mb-4">Embed the AI Demo</h1>
-          <p className="text-lg text-muted-foreground">
+          <p className="text-lg text-white/60">
             Add this interactive demo to your WordPress site or any webpage
           </p>
         </div>
 
         <div className="space-y-8">
           {/* Direct link */}
-          <Card>
+          <Card className="bg-white/5 border-white/10">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-white">
                 <ExternalLink className="w-5 h-5" />
                 Direct Link
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-white/50">
                 Share this link directly or open in a new tab
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-2">
-                <code className="flex-1 bg-muted p-3 rounded-md text-sm break-all">
+                <code className="flex-1 bg-black/30 p-3 rounded-md text-sm break-all text-white/80 border border-white/10">
                   {baseUrl}
                 </code>
                 <Button
                   variant="outline"
                   size="icon"
+                  className="border-white/20 text-white hover:bg-white/10"
                   onClick={() => copyToClipboard(baseUrl, 'link')}
                   data-testid="button-copy-link"
                 >
@@ -92,25 +93,25 @@ function closeDemo() {
           </Card>
 
           {/* Simple iframe embed */}
-          <Card>
+          <Card className="bg-white/5 border-white/10">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-white">
                 <Code className="w-5 h-5" />
                 Simple Embed (iframe)
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-white/50">
                 Paste this code into any HTML page or WordPress HTML block
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="relative">
-                <pre className="bg-muted p-4 rounded-md text-sm overflow-x-auto">
+                <pre className="bg-black/30 p-4 rounded-md text-sm overflow-x-auto text-white/80 border border-white/10">
                   <code>{iframeCode}</code>
                 </pre>
                 <Button
                   variant="outline"
                   size="icon"
-                  className="absolute top-2 right-2"
+                  className="absolute top-2 right-2 border-white/20 text-white hover:bg-white/10"
                   onClick={() => copyToClipboard(iframeCode, 'iframe')}
                   data-testid="button-copy-iframe"
                 >
@@ -121,25 +122,25 @@ function closeDemo() {
           </Card>
 
           {/* Button + Modal embed */}
-          <Card>
+          <Card className="bg-white/5 border-white/10">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-white">
                 <Code className="w-5 h-5" />
                 Button Launcher with Modal
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-white/50">
                 Creates a button that opens the demo in a modal overlay - perfect for hero sections
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="relative">
-                <pre className="bg-muted p-4 rounded-md text-sm overflow-x-auto max-h-96">
+                <pre className="bg-black/30 p-4 rounded-md text-sm overflow-x-auto max-h-96 text-white/80 border border-white/10">
                   <code>{buttonCode}</code>
                 </pre>
                 <Button
                   variant="outline"
                   size="icon"
-                  className="absolute top-2 right-2"
+                  className="absolute top-2 right-2 border-white/20 text-white hover:bg-white/10"
                   onClick={() => copyToClipboard(buttonCode, 'button')}
                   data-testid="button-copy-modal"
                 >
@@ -150,43 +151,46 @@ function closeDemo() {
           </Card>
 
           {/* WordPress instructions */}
-          <Card>
+          <Card className="bg-white/5 border-white/10">
             <CardHeader>
-              <CardTitle>WordPress Instructions</CardTitle>
+              <CardTitle className="text-white">WordPress Instructions</CardTitle>
             </CardHeader>
-            <CardContent className="prose prose-sm dark:prose-invert max-w-none">
-              <ol className="space-y-4">
-                <li>
-                  <strong>For Gutenberg (Block Editor):</strong>
-                  <ul className="mt-2">
-                    <li>Add a "Custom HTML" block</li>
-                    <li>Paste either the iframe code or the button launcher code</li>
-                    <li>Preview and publish</li>
-                  </ul>
-                </li>
-                <li>
-                  <strong>For Classic Editor:</strong>
-                  <ul className="mt-2">
-                    <li>Switch to "Text" mode (not Visual)</li>
-                    <li>Paste the code where you want the demo to appear</li>
-                    <li>Update/publish your page</li>
-                  </ul>
-                </li>
-                <li>
-                  <strong>For Elementor:</strong>
-                  <ul className="mt-2">
-                    <li>Add an HTML widget</li>
-                    <li>Paste the code</li>
-                    <li>Save and preview</li>
-                  </ul>
-                </li>
-              </ol>
+            <CardContent className="text-white/70 space-y-4">
+              <div>
+                <strong className="text-white">For Gutenberg (Block Editor):</strong>
+                <ul className="mt-2 list-disc pl-5 space-y-1 text-sm">
+                  <li>Add a "Custom HTML" block</li>
+                  <li>Paste either the iframe code or the button launcher code</li>
+                  <li>Preview and publish</li>
+                </ul>
+              </div>
+              <div>
+                <strong className="text-white">For Classic Editor:</strong>
+                <ul className="mt-2 list-disc pl-5 space-y-1 text-sm">
+                  <li>Switch to "Text" mode (not Visual)</li>
+                  <li>Paste the code where you want the demo to appear</li>
+                  <li>Update/publish your page</li>
+                </ul>
+              </div>
+              <div>
+                <strong className="text-white">For Elementor:</strong>
+                <ul className="mt-2 list-disc pl-5 space-y-1 text-sm">
+                  <li>Add an HTML widget</li>
+                  <li>Paste the code</li>
+                  <li>Save and preview</li>
+                </ul>
+              </div>
             </CardContent>
           </Card>
 
           {/* Back to demo */}
           <div className="text-center pt-8">
-            <Button asChild size="lg" data-testid="button-view-demo">
+            <Button 
+              asChild 
+              size="lg" 
+              className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white shadow-lg shadow-purple-500/30 border-0"
+              data-testid="button-view-demo"
+            >
               <a href="/">View the Demo</a>
             </Button>
           </div>

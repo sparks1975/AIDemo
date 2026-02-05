@@ -18,7 +18,10 @@ import {
   Cake,
   MessageSquare,
   CheckCircle,
-  Headphones
+  Headphones,
+  Clock,
+  Mail,
+  Smartphone
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -38,43 +41,45 @@ const iconMap: Record<string, React.ElementType> = {
   'cake': Cake,
   'message-square': MessageSquare,
   'check-circle': CheckCircle,
+  'clock': Clock,
+  'mail': Mail,
+  'smartphone': Smartphone,
 };
 
 function StatusCardComponent({ card }: { card: StatusCard }) {
   const Icon = iconMap[card.icon] || CheckCircle;
   
   const colorClasses = {
-    default: 'bg-card border-card-border',
-    success: 'bg-emerald-500/10 border-emerald-500/30 dark:bg-emerald-500/20',
-    warning: 'bg-amber-500/10 border-amber-500/30 dark:bg-amber-500/20',
-    info: 'bg-blue-500/10 border-blue-500/30 dark:bg-blue-500/20',
+    default: 'bg-white/5 border-white/10',
+    success: 'bg-emerald-500/10 border-emerald-500/30',
+    warning: 'bg-amber-500/10 border-amber-500/30',
+    info: 'bg-blue-500/10 border-blue-500/30',
   };
 
   const iconColorClasses = {
-    default: 'text-muted-foreground',
-    success: 'text-emerald-500',
-    warning: 'text-amber-500',
-    info: 'text-blue-500',
+    default: 'text-white/60',
+    success: 'text-emerald-400',
+    warning: 'text-amber-400',
+    info: 'text-blue-400',
   };
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: 20, scale: 0.9 }}
+      initial={{ opacity: 0, x: -20, scale: 0.95 }}
       animate={{ opacity: 1, x: 0, scale: 1 }}
-      exit={{ opacity: 0, x: -20, scale: 0.9 }}
       transition={{ type: 'spring', damping: 20, stiffness: 300 }}
       className={cn(
-        'flex items-center gap-3 px-4 py-3 rounded-lg border backdrop-blur-sm',
+        'flex items-center gap-3 px-3 py-2.5 rounded-lg border backdrop-blur-sm',
         colorClasses[card.color || 'default']
       )}
       data-testid={`status-card-${card.id}`}
     >
-      <div className={cn('p-2 rounded-md bg-background/50', iconColorClasses[card.color || 'default'])}>
-        <Icon className="w-4 h-4" />
+      <div className={cn('p-1.5 rounded-md bg-white/5', iconColorClasses[card.color || 'default'])}>
+        <Icon className="w-3.5 h-3.5" />
       </div>
       <div className="flex flex-col min-w-0">
-        <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{card.label}</span>
-        <span className="text-sm font-semibold truncate">{card.value}</span>
+        <span className="text-[10px] font-medium text-white/50 uppercase tracking-wider">{card.label}</span>
+        <span className="text-xs font-semibold text-white truncate">{card.value}</span>
       </div>
     </motion.div>
   );
@@ -85,31 +90,31 @@ function ChatBubble({ message, isLatest }: { message: ChatMessage; isLatest: boo
   
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-      className={cn('flex gap-3', isAI ? 'justify-start' : 'justify-end')}
+      className={cn('flex gap-2', isAI ? 'justify-start' : 'justify-end')}
       data-testid={`chat-message-${message.id}`}
     >
       {isAI && (
-        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center">
-          <Headphones className="w-4 h-4 text-primary-foreground" />
+        <div className="flex-shrink-0 w-7 h-7 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/20">
+          <Headphones className="w-3.5 h-3.5 text-white" />
         </div>
       )}
       <div
         className={cn(
-          'max-w-[80%] px-4 py-3 rounded-2xl text-sm leading-relaxed',
+          'max-w-[85%] px-3 py-2 rounded-2xl text-sm leading-relaxed',
           isAI 
-            ? 'bg-card border border-card-border rounded-tl-sm' 
-            : 'bg-primary text-primary-foreground rounded-tr-sm',
-          isLatest && 'ring-2 ring-primary/20'
+            ? 'bg-white/10 text-white rounded-tl-sm border border-white/5' 
+            : 'bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-tr-sm shadow-lg shadow-purple-500/20',
+          isLatest && isAI && 'ring-1 ring-purple-400/30'
         )}
       >
         {message.text}
       </div>
       {!isAI && (
-        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-muted flex items-center justify-center">
-          <User className="w-4 h-4 text-muted-foreground" />
+        <div className="flex-shrink-0 w-7 h-7 rounded-full bg-white/10 flex items-center justify-center border border-white/10">
+          <User className="w-3.5 h-3.5 text-white/70" />
         </div>
       )}
     </motion.div>
@@ -125,19 +130,19 @@ export default function DemoPage() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
-  // Get visible messages and cards based on current time
   const visibleMessages = demoConversation.filter(m => m.timestamp <= currentTime);
   const visibleCards = statusCards.filter(c => c.timestamp <= currentTime);
   const latestMessageId = visibleMessages.length > 0 ? visibleMessages[visibleMessages.length - 1].id : null;
 
-  // Auto-scroll chat to bottom when new messages appear
   useEffect(() => {
     if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
     }
   }, [visibleMessages.length]);
 
-  // Update current time while playing
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -211,32 +216,38 @@ export default function DemoPage() {
   const progress = (currentTime / demoDuration) * 100;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex flex-col">
-      {/* Hidden audio element */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950/50 to-slate-950 flex flex-col text-white">
       <audio ref={audioRef} src="/audio/demo-call.mp3" preload="auto" />
 
       {/* Header */}
-      <header className="flex items-center justify-between px-6 py-4 border-b bg-background/80 backdrop-blur-sm">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center">
-            <Phone className="w-5 h-5 text-primary-foreground" />
+      <header className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-black/20 backdrop-blur-sm">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/30">
+            <Phone className="w-4 h-4 text-white" />
           </div>
           <div>
-            <h1 className="font-semibold text-lg">AI Demo Call</h1>
-            <p className="text-xs text-muted-foreground">Interactive demonstration</p>
+            <h1 className="font-semibold text-sm">AI Demo Call</h1>
+            <p className="text-[10px] text-white/50">Interactive demonstration</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
           <Button 
             variant="ghost" 
-            size="icon" 
+            size="icon"
+            className="text-white/70 hover:text-white hover:bg-white/10 h-8 w-8"
             onClick={toggleMute}
             data-testid="button-mute"
           >
-            {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+            {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
           </Button>
-          <Button variant="outline" size="sm" asChild data-testid="button-embed-info">
-            <Link href="/instructions">Embed This Demo</Link>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            asChild 
+            className="text-white/70 hover:text-white hover:bg-white/10 text-xs h-8"
+            data-testid="button-embed-info"
+          >
+            <Link href="/instructions">Embed</Link>
           </Button>
         </div>
       </header>
@@ -244,48 +255,62 @@ export default function DemoPage() {
       {/* Main content */}
       <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
         {/* Status cards sidebar */}
-        <aside className="lg:w-80 border-b lg:border-b-0 lg:border-r bg-muted/30 p-4 overflow-y-auto">
-          <h2 className="text-sm font-medium text-muted-foreground mb-4 uppercase tracking-wide">
-            Live Call Status
+        <aside className="lg:w-64 border-b lg:border-b-0 lg:border-r border-white/10 bg-black/20 p-3 overflow-y-auto max-h-48 lg:max-h-none">
+          <h2 className="text-[10px] font-semibold text-white/40 mb-3 uppercase tracking-wider flex items-center gap-1.5">
+            <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            Live Status
           </h2>
-          <div className="space-y-3">
+          <div className="space-y-2">
             <AnimatePresence>
               {visibleCards.map(card => (
                 <StatusCardComponent key={card.id} card={card} />
               ))}
             </AnimatePresence>
             {visibleCards.length === 0 && !hasStarted && (
-              <div className="text-center py-8 text-muted-foreground text-sm">
-                Press play to start the demo
+              <div className="text-center py-6 text-white/30 text-xs">
+                Press play to start
               </div>
             )}
           </div>
         </aside>
 
         {/* Chat area */}
-        <main className="flex-1 flex flex-col overflow-hidden">
+        <main className="flex-1 flex flex-col overflow-hidden bg-black/10">
           {/* Chat messages */}
           <div 
             ref={chatContainerRef}
-            className="flex-1 overflow-y-auto p-6 space-y-4"
+            className="flex-1 overflow-y-auto p-4 space-y-3"
           >
             {!hasStarted && (
               <motion.div 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="flex flex-col items-center justify-center h-full text-center"
+                className="flex flex-col items-center justify-center h-full text-center px-4"
               >
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center mb-6">
-                  <Headphones className="w-10 h-10 text-primary-foreground" />
+                <div className="relative mb-6">
+                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-2xl shadow-purple-500/40">
+                    <Headphones className="w-10 h-10 text-white" />
+                  </div>
+                  <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center border-2 border-slate-950">
+                    <Phone className="w-3 h-3 text-white" />
+                  </div>
                 </div>
-                <h2 className="text-2xl font-bold mb-2">Ready to Experience the Demo?</h2>
-                <p className="text-muted-foreground max-w-md mb-6">
-                  Watch how the AI handles a real appointment booking call. 
-                  Turn on your sound for the full experience.
+                <h2 className="text-xl font-bold mb-2">Ready to Experience the Demo?</h2>
+                <p className="text-white/50 text-sm max-w-sm mb-6">
+                  Watch how AI handles a real call. Turn on your sound for the full experience.
                 </p>
-                <Button size="lg" onClick={handlePlay} data-testid="button-start-demo">
+                <div className="flex items-center gap-2 text-xs text-white/40 mb-6">
+                  <Volume2 className="w-3.5 h-3.5" />
+                  <span>This audio has NOT been edited.</span>
+                </div>
+                <Button 
+                  size="lg" 
+                  onClick={handlePlay} 
+                  className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white shadow-lg shadow-purple-500/30 border-0"
+                  data-testid="button-start-demo"
+                >
                   <Play className="w-5 h-5 mr-2" />
-                  Start Demo
+                  See it in Action
                 </Button>
               </motion.div>
             )}
@@ -306,19 +331,23 @@ export default function DemoPage() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex flex-col items-center py-8"
+                className="flex flex-col items-center py-6"
               >
-                <div className="w-16 h-16 rounded-full bg-emerald-500/20 flex items-center justify-center mb-4">
-                  <CheckCircle className="w-8 h-8 text-emerald-500" />
+                <div className="w-14 h-14 rounded-full bg-emerald-500/20 flex items-center justify-center mb-3 border border-emerald-500/30">
+                  <CheckCircle className="w-7 h-7 text-emerald-400" />
                 </div>
-                <h3 className="text-lg font-semibold mb-2">Demo Complete!</h3>
-                <p className="text-muted-foreground text-sm text-center max-w-md mb-4">
-                  See how AI can handle your calls 24/7, book appointments, 
-                  and provide exceptional customer service.
+                <h3 className="text-base font-semibold mb-1">Demo Complete!</h3>
+                <p className="text-white/50 text-xs text-center max-w-xs mb-4">
+                  See how AI can handle your calls 24/7
                 </p>
-                <Button onClick={handleReplay} variant="outline" data-testid="button-replay">
-                  <RotateCcw className="w-4 h-4 mr-2" />
-                  Watch Again
+                <Button 
+                  onClick={handleReplay} 
+                  variant="outline" 
+                  className="border-white/20 text-white hover:bg-white/10 text-sm"
+                  data-testid="button-replay"
+                >
+                  <RotateCcw className="w-3.5 h-3.5 mr-2" />
+                  Replay Demo
                 </Button>
               </motion.div>
             )}
@@ -326,39 +355,38 @@ export default function DemoPage() {
 
           {/* Controls */}
           {hasStarted && (
-            <div className="border-t bg-background/80 backdrop-blur-sm p-4">
-              <div className="max-w-2xl mx-auto">
-                {/* Progress bar */}
-                <div className="mb-4">
-                  <Progress value={progress} className="h-1" />
-                  <div className="flex justify-between mt-1 text-xs text-muted-foreground">
+            <div className="border-t border-white/10 bg-black/30 backdrop-blur-sm p-3">
+              <div className="max-w-lg mx-auto">
+                <div className="mb-3">
+                  <Progress value={progress} className="h-1 bg-white/10" />
+                  <div className="flex justify-between mt-1 text-[10px] text-white/40">
                     <span>{formatTime(currentTime)}</span>
                     <span>{formatTime(demoDuration)}</span>
                   </div>
                 </div>
 
-                {/* Control buttons */}
-                <div className="flex items-center justify-center gap-4">
+                <div className="flex items-center justify-center gap-3">
                   {!isComplete ? (
                     <>
                       <Button 
                         size="lg" 
                         onClick={handlePlay}
-                        className="w-14 h-14 rounded-full"
+                        className="w-12 h-12 rounded-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 shadow-lg shadow-purple-500/30 border-0"
                         data-testid="button-play-pause"
                       >
                         {isPlaying ? (
-                          <Pause className="w-6 h-6" />
+                          <Pause className="w-5 h-5" />
                         ) : (
-                          <Play className="w-6 h-6 ml-1" />
+                          <Play className="w-5 h-5 ml-0.5" />
                         )}
                       </Button>
                       <Button 
-                        variant="outline" 
+                        variant="ghost" 
                         onClick={handleSkip}
+                        className="text-white/60 hover:text-white hover:bg-white/10 text-xs"
                         data-testid="button-skip"
                       >
-                        <SkipForward className="w-4 h-4 mr-2" />
+                        <SkipForward className="w-3.5 h-3.5 mr-1.5" />
                         Skip Demo
                       </Button>
                     </>
@@ -366,10 +394,10 @@ export default function DemoPage() {
                     <Button 
                       size="lg" 
                       onClick={handleReplay}
-                      className="w-14 h-14 rounded-full"
+                      className="w-12 h-12 rounded-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 shadow-lg shadow-purple-500/30 border-0"
                       data-testid="button-replay-main"
                     >
-                      <RotateCcw className="w-6 h-6" />
+                      <RotateCcw className="w-5 h-5" />
                     </Button>
                   )}
                 </div>
