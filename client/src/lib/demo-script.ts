@@ -29,7 +29,7 @@ export interface Badge {
 // Timecodes from user-provided transcript + 1s buffer
 export const demoConversation: ChatMessage[] = [
   { id: 1, speaker: 'ai', text: "Hello and thanks for calling Aloha. My name is Charlie, the AI receptionist. How can I help you today?", timestamp: 1 },
-  { id: 2, speaker: 'caller', text: "Hi Charlie, my name's Megan. I'm new to town and I'm looking for a new chiropractor. Are you guys accepting new patients?", timestamp: 6 },
+  { id: 2, speaker: 'caller', text: "Hi Charlie, my name's Megan. I'm new to town and I'm looking for a new chiropractor. Are you guys accepting new patients?", timestamp: 3 },
   { id: 3, speaker: 'ai', text: "Yes, we are accepting new patients. I can help you schedule an appointment. May I have your last name, please?", timestamp: 17 },
   { id: 4, speaker: 'caller', text: "Yes, it's Jones.", timestamp: 25 },
   { id: 5, speaker: 'ai', text: "Thank you. That's Jones, spelled J-O-N-E-S, correct?", timestamp: 26 },
