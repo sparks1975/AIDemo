@@ -44,7 +44,7 @@ const iconMap: Record<string, React.ElementType> = {
   'smartphone': Smartphone,
 };
 
-const ALOHA_BLUE = '#FF6B00';
+const ALOHA_BLUE = '#E63946';
 
 function BadgeComponent({ badge }: { badge: Badge }) {
   const Icon = iconMap[badge.icon] || CheckCircle;

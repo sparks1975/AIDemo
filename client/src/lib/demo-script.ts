@@ -35,16 +35,16 @@ export const demoConversation: ChatMessage[] = [
   { id: 5, speaker: 'ai', text: "Thank you. That's Jones, spelled J-O-N-E-S, correct?", timestamp: 21.780 },
   { id: 6, speaker: 'caller', text: "Yeah, you got it.", timestamp: 27.280 },
   { id: 7, speaker: 'ai', text: "Great. Could you please provide your date of birth?", timestamp: 28.950 },
-  { id: 8, speaker: 'caller', text: "September 22nd, 1995.", timestamp: 31.980 },
+  { id: 8, speaker: 'caller', text: "September 22nd, 1995.", timestamp: 32.050 },
   { id: 9, speaker: 'ai', text: "Thank you. Just to confirm, your date of birth is September 22nd, 1995. Is that correct?", timestamp: 35.480 },
-  { id: 10, speaker: 'caller', text: "Yes.", timestamp: 44.180 },
-  { id: 11, speaker: 'ai', text: "Thank you for your patience. We can proceed with scheduling your appointment. Do you have a specific date in mind, or would you like me to look for the earliest available time?", timestamp: 45.260 },
+  { id: 10, speaker: 'caller', text: "Yes.", timestamp: 44.310 },
+  { id: 11, speaker: 'ai', text: "Thank you for your patience. We can proceed with scheduling your appointment. Do you have a specific date in mind, or would you like me to look for the earliest available time?", timestamp: 45.280 },
   { id: 12, speaker: 'caller', text: "I'm usually free Thursdays and Fridays, so how about let's check this Thursday?", timestamp: 54.120 },
   { id: 13, speaker: 'ai', text: "We have some available slots for this Thursday, October 9th. Here are a few options: 9:00 in the morning, 9:15 in the morning, 9:30 in the morning. Do any of these times work for you?", timestamp: 60.340 },
-  { id: 14, speaker: 'caller', text: "9:30 should work, yeah.", timestamp: 72.350 },
-  { id: 15, speaker: 'ai', text: "Your appointment is successfully scheduled for Thursday, October the 9th at 9:30 in the morning. Is there anything else I can assist you with today?", timestamp: 75.150 },
+  { id: 14, speaker: 'caller', text: "9:30 should work, yeah.", timestamp: 72.180 },
+  { id: 15, speaker: 'ai', text: "Your appointment is successfully scheduled for Thursday, October the 9th at 9:30 in the morning. Is there anything else I can assist you with today?", timestamp: 75.250 },
   { id: 16, speaker: 'caller', text: "No, that was everything. Thank you so much.", timestamp: 86.540 },
-  { id: 17, speaker: 'ai', text: "You're welcome. Have a great day and we look forward to seeing you soon. Goodbye.", timestamp: 89.850 },
+  { id: 17, speaker: 'ai', text: "You're welcome. Have a great day and we look forward to seeing you soon. Goodbye.", timestamp: 89.980 },
 ];
 
 // Badge updates - each update modifies an existing badge or creates it
@@ -61,12 +61,12 @@ export const badgeUpdates: BadgeUpdate[] = [
   // After caller confirms spelling
   { badgeId: 'patient', icon: 'user', label: 'Patient', value: 'Megan Jones', timestamp: 27.280, color: 'info' },
   // After caller confirms DOB
-  { badgeId: 'patient', icon: 'user', label: 'Patient', value: 'Megan Jones • 09/22/1995', timestamp: 44.180, color: 'success' },
+  { badgeId: 'patient', icon: 'user', label: 'Patient', value: 'Megan Jones • 09/22/1995', timestamp: 44.310, color: 'success' },
   
   // Appointment badge - after AI lists slots
   { badgeId: 'appointment', icon: 'calendar', label: 'Appointment', value: 'Thursday, October 9th', timestamp: 60.340, color: 'info' },
   // After caller picks 9:30
-  { badgeId: 'appointment', icon: 'calendar', label: 'Appointment', value: 'Thu, Oct 9 @ 9:30 AM', timestamp: 72.350, color: 'info' },
+  { badgeId: 'appointment', icon: 'calendar', label: 'Appointment', value: 'Thu, Oct 9 @ 9:30 AM', timestamp: 72.180, color: 'info' },
   // After AI confirms booking
   { badgeId: 'appointment', icon: 'calendar-check', label: 'Appointment', value: 'Booked: Thu, Oct 9 @ 9:30 AM', timestamp: 86.540, color: 'success' },
   
