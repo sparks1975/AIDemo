@@ -8,13 +8,21 @@ export interface ChatMessage {
   timestamp: number; // seconds into the audio
 }
 
-export interface StatusCard {
+export interface BadgeUpdate {
+  badgeId: string;
+  icon: string;
+  label: string;
+  value: string;
+  timestamp: number;
+  color?: 'default' | 'success' | 'warning' | 'info';
+}
+
+export interface Badge {
   id: string;
   icon: string;
   label: string;
   value: string;
-  timestamp: number; // when to show this card
-  color?: 'default' | 'success' | 'warning' | 'info';
+  color: 'default' | 'success' | 'warning' | 'info';
 }
 
 // Conversation transcript synced to your audio
@@ -38,17 +46,52 @@ export const demoConversation: ChatMessage[] = [
   { id: 17, speaker: 'ai', text: "You're welcome. Have a great day and we look forward to seeing you soon. Goodbye.", timestamp: 89 },
 ];
 
-// Status cards that appear during the conversation
-export const statusCards: StatusCard[] = [
-  { id: 'pickup', icon: 'phone', label: 'AI Receptionist', value: 'Charlie answering...', timestamp: 0, color: 'success' },
-  { id: 'request', icon: 'clipboard', label: 'Request Type', value: 'New Patient Booking', timestamp: 10, color: 'info' },
-  { id: 'patient', icon: 'user', label: 'Patient Name', value: 'Megan Jones', timestamp: 23, color: 'info' },
-  { id: 'dob', icon: 'cake', label: 'Date of Birth', value: 'Sept 22, 1995', timestamp: 34, color: 'info' },
-  { id: 'scheduling', icon: 'calendar', label: 'Checking Schedule', value: 'Thursday availability...', timestamp: 55, color: 'default' },
-  { id: 'slots', icon: 'clock', label: 'Available Times', value: '9:00, 9:15, 9:30 AM', timestamp: 62, color: 'info' },
-  { id: 'booking', icon: 'calendar-check', label: 'Appointment Booked', value: 'Thu, Oct 9 @ 9:30 AM', timestamp: 75, color: 'success' },
-  { id: 'complete', icon: 'check-circle', label: 'Call Complete', value: 'New patient scheduled', timestamp: 89, color: 'success' },
+// Badge updates - each update modifies an existing badge or creates it
+// Badges are identified by badgeId - same badgeId = update existing badge
+export const badgeUpdates: BadgeUpdate[] = [
+  // Call status badge - appears at start
+  { badgeId: 'call', icon: 'phone', label: 'Call Status', value: 'Charlie answering...', timestamp: 0, color: 'success' },
+  
+  // Request type - identified when caller mentions new patient
+  { badgeId: 'request', icon: 'clipboard', label: 'Request', value: 'New Patient Booking', timestamp: 10, color: 'info' },
+  
+  // Patient badge - starts collecting, then updates with info
+  { badgeId: 'patient', icon: 'user', label: 'Patient', value: 'Collecting info...', timestamp: 15, color: 'default' },
+  { badgeId: 'patient', icon: 'user', label: 'Patient', value: 'Megan Jones', timestamp: 23, color: 'info' },
+  { badgeId: 'patient', icon: 'user', label: 'Patient', value: 'Megan Jones • 09/22/1995', timestamp: 40, color: 'success' },
+  
+  // Appointment badge - starts checking, then shows options, then confirmed
+  { badgeId: 'appointment', icon: 'calendar', label: 'Appointment', value: 'Checking availability...', timestamp: 52, color: 'default' },
+  { badgeId: 'appointment', icon: 'calendar', label: 'Appointment', value: 'Thu Oct 9: 9:00, 9:15, 9:30 AM', timestamp: 62, color: 'info' },
+  { badgeId: 'appointment', icon: 'calendar-check', label: 'Appointment', value: 'Booked: Thu Oct 9 @ 9:30 AM', timestamp: 75, color: 'success' },
+  
+  // Call status updates at end
+  { badgeId: 'call', icon: 'check-circle', label: 'Call Status', value: 'Complete', timestamp: 89, color: 'success' },
 ];
 
 // Total duration of the demo in seconds
 export const demoDuration = 95;
+
+// Helper to get current badge states at a given time
+export function getBadgesAtTime(time: number): Badge[] {
+  const badgeMap = new Map<string, Badge>();
+  
+  // Process all updates up to current time
+  for (const update of badgeUpdates) {
+    if (update.timestamp <= time) {
+      badgeMap.set(update.badgeId, {
+        id: update.badgeId,
+        icon: update.icon,
+        label: update.label,
+        value: update.value,
+        color: update.color || 'default',
+      });
+    }
+  }
+  
+  // Return badges in order they first appeared
+  const orderedIds = ['call', 'request', 'patient', 'appointment'];
+  return orderedIds
+    .filter(id => badgeMap.has(id))
+    .map(id => badgeMap.get(id)!);
+}

@@ -23,7 +23,7 @@ import {
   Smartphone
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { demoConversation, statusCards, demoDuration, type ChatMessage, type StatusCard } from '@/lib/demo-script';
+import { demoConversation, getBadgesAtTime, demoDuration, type ChatMessage, type Badge } from '@/lib/demo-script';
 import { cn } from '@/lib/utils';
 
 const iconMap: Record<string, React.ElementType> = {
@@ -46,24 +46,38 @@ const iconMap: Record<string, React.ElementType> = {
 // Aloha brand colors
 const ALOHA_BLUE = '#017AFF';
 
-function StatusCardComponent({ card }: { card: StatusCard }) {
-  const Icon = iconMap[card.icon] || CheckCircle;
+function BadgeComponent({ badge }: { badge: Badge }) {
+  const Icon = iconMap[badge.icon] || CheckCircle;
   
+  const iconColors = {
+    default: 'text-[#4D4D4D]',
+    success: 'text-emerald-500',
+    warning: 'text-amber-500',
+    info: 'text-[#017AFF]',
+  };
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 15, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.95 }}
+      layout
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
       transition={{ type: 'spring', damping: 25, stiffness: 350 }}
-      className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white shadow-md border border-[#D9D9D9]"
-      data-testid={`status-card-${card.id}`}
+      className="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white shadow-sm border border-[#D9D9D9]"
+      data-testid={`badge-${badge.id}`}
     >
-      <div className="flex-shrink-0 text-[#017AFF]">
-        <Icon className="w-4 h-4" />
+      <div className={cn('flex-shrink-0', iconColors[badge.color])}>
+        <Icon className="w-5 h-5" />
       </div>
       <div className="flex flex-col min-w-0">
-        <span className="text-[10px] font-medium text-[#4D4D4D] uppercase tracking-wide leading-tight">{card.label}</span>
-        <span className="text-xs font-semibold text-black leading-tight">{card.value}</span>
+        <span className="text-[10px] font-medium text-[#4D4D4D] uppercase tracking-wider leading-tight">{badge.label}</span>
+        <motion.span 
+          key={badge.value}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-sm font-semibold text-black leading-tight"
+        >
+          {badge.value}
+        </motion.span>
       </div>
     </motion.div>
   );
@@ -77,7 +91,7 @@ export default function DemoPage() {
   const [isComplete, setIsComplete] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const visibleCards = statusCards.filter(c => c.timestamp <= currentTime);
+  const currentBadges = getBadgesAtTime(currentTime);
   
   const currentMessage = demoConversation
     .filter(m => m.timestamp <= currentTime)
@@ -258,11 +272,11 @@ export default function DemoPage() {
             {/* Spacer to push content down */}
             <div className="flex-1" />
             
-            {/* Status cards - centered, horizontal wrap */}
-            <div className="flex flex-wrap justify-center gap-2 mb-6 px-4">
+            {/* Badges - centered, stacked vertically */}
+            <div className="flex flex-col items-center gap-2 mb-6 px-4">
               <AnimatePresence>
-                {visibleCards.slice(-6).map(card => (
-                  <StatusCardComponent key={card.id} card={card} />
+                {currentBadges.map(badge => (
+                  <BadgeComponent key={badge.id} badge={badge} />
                 ))}
               </AnimatePresence>
             </div>
