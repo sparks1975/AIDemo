@@ -48,25 +48,30 @@ export const demoConversation: ChatMessage[] = [
 
 // Badge updates - each update modifies an existing badge or creates it
 // Badges are identified by badgeId - same badgeId = update existing badge
+// Timestamps are set to trigger AFTER the corresponding audio has played
 export const badgeUpdates: BadgeUpdate[] = [
   // Call status badge - appears at start
   { badgeId: 'call', icon: 'phone', label: 'Call Status', value: 'Charlie answering...', timestamp: 0, color: 'success' },
   
-  // Request type - identified when caller mentions new patient
-  { badgeId: 'request', icon: 'clipboard', label: 'Request', value: 'New Patient Booking', timestamp: 10, color: 'info' },
+  // Request type - after caller says "new patient" (audio at 8-14s)
+  { badgeId: 'request', icon: 'clipboard', label: 'Request', value: 'New Patient Booking', timestamp: 14, color: 'info' },
   
-  // Patient badge - starts collecting, then updates with info
-  { badgeId: 'patient', icon: 'user', label: 'Patient', value: 'Collecting info...', timestamp: 15, color: 'default' },
-  { badgeId: 'patient', icon: 'user', label: 'Patient', value: 'Megan Jones', timestamp: 23, color: 'info' },
-  { badgeId: 'patient', icon: 'user', label: 'Patient', value: 'Megan Jones • 09/22/1995', timestamp: 40, color: 'success' },
+  // Patient badge - after AI asks for name (audio at 15-21s)
+  { badgeId: 'patient', icon: 'user', label: 'Patient', value: 'Collecting info...', timestamp: 21, color: 'default' },
+  // After caller says "Jones" and AI confirms spelling (audio at 21-28s)
+  { badgeId: 'patient', icon: 'user', label: 'Patient', value: 'Megan Jones', timestamp: 28, color: 'info' },
+  // After caller confirms DOB (audio at 34-40s, confirmed at 40)
+  { badgeId: 'patient', icon: 'user', label: 'Patient', value: 'Megan Jones • 09/22/1995', timestamp: 41, color: 'success' },
   
-  // Appointment badge - starts checking, then shows options, then confirmed
-  { badgeId: 'appointment', icon: 'calendar', label: 'Appointment', value: 'Checking availability...', timestamp: 52, color: 'default' },
-  { badgeId: 'appointment', icon: 'calendar', label: 'Appointment', value: 'Thu Oct 9: 9:00, 9:15, 9:30 AM', timestamp: 62, color: 'info' },
-  { badgeId: 'appointment', icon: 'calendar-check', label: 'Appointment', value: 'Booked: Thu Oct 9 @ 9:30 AM', timestamp: 75, color: 'success' },
+  // Appointment badge - after caller asks about Thursday (audio at 52-59s)
+  { badgeId: 'appointment', icon: 'calendar', label: 'Appointment', value: 'Checking availability...', timestamp: 59, color: 'default' },
+  // After AI lists available times (audio at 60-72s)
+  { badgeId: 'appointment', icon: 'calendar', label: 'Appointment', value: 'Thu Oct 9: 9:00, 9:15, 9:30 AM', timestamp: 72, color: 'info' },
+  // After AI confirms booking (audio at 75-85s)
+  { badgeId: 'appointment', icon: 'calendar-check', label: 'Appointment', value: 'Booked: Thu Oct 9 @ 9:30 AM', timestamp: 85, color: 'success' },
   
-  // Call status updates at end
-  { badgeId: 'call', icon: 'check-circle', label: 'Call Status', value: 'Complete', timestamp: 89, color: 'success' },
+  // Call status updates after goodbye (audio at 89s)
+  { badgeId: 'call', icon: 'check-circle', label: 'Call Status', value: 'Complete', timestamp: 93, color: 'success' },
 ];
 
 // Total duration of the demo in seconds

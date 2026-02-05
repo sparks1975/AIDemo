@@ -62,19 +62,19 @@ function BadgeComponent({ badge }: { badge: Badge }) {
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ type: 'spring', damping: 25, stiffness: 350 }}
-      className="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white shadow-sm border border-[#D9D9D9]"
+      className="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white shadow-sm border border-[#D9D9D9] w-72"
       data-testid={`badge-${badge.id}`}
     >
       <div className={cn('flex-shrink-0', iconColors[badge.color])}>
         <Icon className="w-5 h-5" />
       </div>
-      <div className="flex flex-col min-w-0">
+      <div className="flex flex-col min-w-0 flex-1">
         <span className="text-[10px] font-medium text-[#4D4D4D] uppercase tracking-wider leading-tight">{badge.label}</span>
         <motion.span 
           key={badge.value}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="text-sm font-semibold text-black leading-tight"
+          className="text-sm font-semibold text-black leading-tight truncate"
         >
           {badge.value}
         </motion.span>
