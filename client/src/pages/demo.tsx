@@ -89,6 +89,7 @@ export default function DemoPage() {
   const [isMuted, setIsMuted] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
+  const [isAudioLoaded, setIsAudioLoaded] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const currentBadges = getBadgesAtTime(currentTime);
@@ -97,9 +98,14 @@ export default function DemoPage() {
     .filter(m => m.timestamp <= currentTime)
     .pop();
 
+  // Preload audio on mount
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
+
+    const handleCanPlayThrough = () => {
+      setIsAudioLoaded(true);
+    };
 
     const handleTimeUpdate = () => {
       setCurrentTime(audio.currentTime);
@@ -110,10 +116,17 @@ export default function DemoPage() {
       setIsComplete(true);
     };
 
+    // Check if already loaded
+    if (audio.readyState >= 4) {
+      setIsAudioLoaded(true);
+    }
+
+    audio.addEventListener('canplaythrough', handleCanPlayThrough);
     audio.addEventListener('timeupdate', handleTimeUpdate);
     audio.addEventListener('ended', handleEnded);
 
     return () => {
+      audio.removeEventListener('canplaythrough', handleCanPlayThrough);
       audio.removeEventListener('timeupdate', handleTimeUpdate);
       audio.removeEventListener('ended', handleEnded);
     };
@@ -256,12 +269,22 @@ export default function DemoPage() {
             <Button 
               size="lg" 
               onClick={handlePlay}
-              className="text-white text-lg px-8 py-6 rounded-full shadow-lg border-0"
+              disabled={!isAudioLoaded}
+              className="text-white text-lg px-8 py-6 rounded-full shadow-lg border-0 disabled:opacity-50"
               style={{ backgroundColor: ALOHA_BLUE }}
               data-testid="button-start-demo"
             >
-              <Play className="w-6 h-6 mr-2" />
-              See it in Action
+              {isAudioLoaded ? (
+                <>
+                  <Play className="w-6 h-6 mr-2" />
+                  See it in Action
+                </>
+              ) : (
+                <>
+                  <div className="w-5 h-5 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Loading...
+                </>
+              )}
             </Button>
           </motion.div>
         )}
