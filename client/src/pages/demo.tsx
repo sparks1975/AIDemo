@@ -44,7 +44,7 @@ const iconMap: Record<string, React.ElementType> = {
   'smartphone': Smartphone,
 };
 
-const ALOHA_BLUE = '#E63946';
+const ALOHA_BLUE = '#8B5CF6';
 
 function BadgeComponent({ badge }: { badge: Badge }) {
   const Icon = iconMap[badge.icon] || CheckCircle;
@@ -134,32 +134,44 @@ export default function DemoPage() {
     const audio = new Audio('/audio/demo-call.mp3');
     audio.preload = 'auto';
     audioRef.current = audio;
+    let rafId: number | null = null;
 
     const handleCanPlayThrough = () => {
       setIsLoading(false);
     };
 
-    const handleTimeUpdate = () => {
+    const pollTime = () => {
       setCurrentTime(audio.currentTime);
+      rafId = requestAnimationFrame(pollTime);
     };
 
     const handlePlaying = () => {
       setIsStarting(false);
       setAudioActuallyPlaying(true);
+      if (rafId === null) {
+        rafId = requestAnimationFrame(pollTime);
+      }
     };
 
     const handlePause = () => {
       setAudioActuallyPlaying(false);
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
     };
 
     const handleEnded = () => {
       setIsPlaying(false);
       setAudioActuallyPlaying(false);
       setIsComplete(true);
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
     };
 
     audio.addEventListener('canplaythrough', handleCanPlayThrough);
-    audio.addEventListener('timeupdate', handleTimeUpdate);
     audio.addEventListener('playing', handlePlaying);
     audio.addEventListener('pause', handlePause);
     audio.addEventListener('ended', handleEnded);
@@ -169,10 +181,12 @@ export default function DemoPage() {
 
     return () => {
       audio.removeEventListener('canplaythrough', handleCanPlayThrough);
-      audio.removeEventListener('timeupdate', handleTimeUpdate);
       audio.removeEventListener('playing', handlePlaying);
       audio.removeEventListener('pause', handlePause);
       audio.removeEventListener('ended', handleEnded);
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+      }
       audio.pause();
     };
   }, []);
