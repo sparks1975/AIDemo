@@ -1,11 +1,17 @@
-# AI Demo Widget
+# Aloha AI Receptionist Demo
 
 ## Overview
-An interactive AI call demo widget that simulates an AI receptionist handling a phone call. The demo features:
+An interactive AI call demo widget showcasing Charlie, the AI receptionist for Aloha (chiropractor). The demo features:
 - Synchronized audio playback with animated chat bubbles
-- Real-time status cards showing call progress
-- Play/pause/skip controls
+- Real-time status cards showing call progress (patient info, scheduling, booking)
+- Play/pause/skip controls with dark purple/violet theme
 - Embeddable design for WordPress and other websites
+
+## Current Demo Content
+- **AI Receptionist:** Charlie
+- **Caller:** Megan Jones (new patient)
+- **Business:** Aloha (chiropractor)
+- **Demo Length:** ~95 seconds
 
 ## Project Structure
 ```
@@ -40,4 +46,4 @@ Edit `client/src/lib/demo-script.ts` to:
 3. Use the button launcher for modal-style demos
 
 ## Recent Changes
-- Feb 2025: Initial demo widget created with audio sync, chat bubbles, status cards
+- Feb 2025: Updated with Aloha/Charlie demo, dark purple theme matching Arini.ai style

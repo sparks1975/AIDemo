@@ -226,8 +226,8 @@ export default function DemoPage() {
             <Phone className="w-4 h-4 text-white" />
           </div>
           <div>
-            <h1 className="font-semibold text-sm">AI Demo Call</h1>
-            <p className="text-[10px] text-white/50">Interactive demonstration</p>
+            <h1 className="font-semibold text-sm">Aloha AI Receptionist</h1>
+            <p className="text-[10px] text-white/50">Live call demonstration</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -295,9 +295,9 @@ export default function DemoPage() {
                     <Phone className="w-3 h-3 text-white" />
                   </div>
                 </div>
-                <h2 className="text-xl font-bold mb-2">Ready to Experience the Demo?</h2>
+                <h2 className="text-xl font-bold mb-2">Hear Charlie in Action</h2>
                 <p className="text-white/50 text-sm max-w-sm mb-6">
-                  Watch how AI handles a real call. Turn on your sound for the full experience.
+                  Listen to our AI receptionist handle a real new patient booking. Turn on your sound.
                 </p>
                 <div className="flex items-center gap-2 text-xs text-white/40 mb-6">
                   <Volume2 className="w-3.5 h-3.5" />
