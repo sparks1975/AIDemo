@@ -44,7 +44,6 @@ const iconMap: Record<string, React.ElementType> = {
   'smartphone': Smartphone,
 };
 
-// Aloha brand colors
 const ALOHA_BLUE = '#017AFF';
 
 function BadgeComponent({ badge }: { badge: Badge }) {
@@ -88,16 +87,16 @@ export default function DemoPage() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
-  const [hasStarted, setHasStarted] = useState(false);
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false); // True only when audio is ACTUALLY playing
   const [isComplete, setIsComplete] = useState(false);
   const [isAudioReady, setIsAudioReady] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Only show badges/transcript if audio has started playing
-  const currentBadges = hasStarted ? getBadgesAtTime(currentTime) : [];
+  // Only show badges/transcript when audio is ACTUALLY playing (not just clicked)
+  const currentBadges = isAudioPlaying ? getBadgesAtTime(currentTime) : [];
   
-  const currentMessage = hasStarted 
+  const currentMessage = isAudioPlaying 
     ? demoConversation.filter(m => m.timestamp <= currentTime).pop()
     : null;
 
@@ -106,9 +105,20 @@ export default function DemoPage() {
     const audio = new Audio();
     audio.preload = 'auto';
     
+    // Only mark ready when we can play through without buffering
     const handleCanPlayThrough = () => {
       setIsAudioReady(true);
       setIsLoading(false);
+    };
+
+    // This fires when audio ACTUALLY starts playing
+    const handlePlaying = () => {
+      setIsAudioPlaying(true);
+      setIsPlaying(true);
+    };
+
+    const handlePause = () => {
+      setIsPlaying(false);
     };
 
     const handleTimeUpdate = () => {
@@ -117,20 +127,23 @@ export default function DemoPage() {
 
     const handleEnded = () => {
       setIsPlaying(false);
+      setIsAudioPlaying(false);
       setIsComplete(true);
     };
 
-    const handleError = () => {
-      console.error('Audio failed to load');
-      setIsLoading(false);
+    const handleWaiting = () => {
+      // Audio is buffering - should not happen if properly preloaded
+      console.log('Audio buffering...');
     };
 
     audio.addEventListener('canplaythrough', handleCanPlayThrough);
+    audio.addEventListener('playing', handlePlaying);
+    audio.addEventListener('pause', handlePause);
     audio.addEventListener('timeupdate', handleTimeUpdate);
     audio.addEventListener('ended', handleEnded);
-    audio.addEventListener('error', handleError);
+    audio.addEventListener('waiting', handleWaiting);
 
-    // Start loading the audio
+    // Start loading
     audio.src = '/audio/demo-call.mp3';
     audio.load();
     
@@ -138,9 +151,11 @@ export default function DemoPage() {
 
     return () => {
       audio.removeEventListener('canplaythrough', handleCanPlayThrough);
+      audio.removeEventListener('playing', handlePlaying);
+      audio.removeEventListener('pause', handlePause);
       audio.removeEventListener('timeupdate', handleTimeUpdate);
       audio.removeEventListener('ended', handleEnded);
-      audio.removeEventListener('error', handleError);
+      audio.removeEventListener('waiting', handleWaiting);
       audio.pause();
       audio.src = '';
     };
@@ -152,16 +167,11 @@ export default function DemoPage() {
 
     if (isPlaying) {
       audio.pause();
-      setIsPlaying(false);
     } else {
-      // Mark as started and play
-      if (!hasStarted) {
-        setHasStarted(true);
-      }
+      // Play - the 'playing' event will trigger UI update
       audio.play();
-      setIsPlaying(true);
     }
-  }, [isPlaying, hasStarted, isAudioReady]);
+  }, [isPlaying, isAudioReady]);
 
   const handleSkip = useCallback(() => {
     const audio = audioRef.current;
@@ -169,9 +179,9 @@ export default function DemoPage() {
       audio.pause();
     }
     setIsPlaying(false);
+    setIsAudioPlaying(false);
     setCurrentTime(demoDuration);
     setIsComplete(true);
-    setHasStarted(true);
   }, []);
 
   const handleReplay = useCallback(() => {
@@ -181,9 +191,7 @@ export default function DemoPage() {
       audio.play();
     }
     setCurrentTime(0);
-    setIsPlaying(true);
     setIsComplete(false);
-    setHasStarted(true);
   }, []);
 
   const toggleMute = useCallback(() => {
@@ -245,13 +253,12 @@ export default function DemoPage() {
         </Button>
       </div>
 
-      {/* Main content - single screen layout */}
+      {/* Main content */}
       <main className="flex-1 flex flex-col items-center justify-end relative z-10 px-4 pb-8">
-        {/* Spacer to push content down */}
         <div className="flex-1" />
         
-        {/* Title - show when not started */}
-        {!hasStarted && (
+        {/* Title - show when audio is not playing */}
+        {!isAudioPlaying && !isComplete && (
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -275,8 +282,8 @@ export default function DemoPage() {
           </motion.div>
         )}
         
-        {/* Badges - centered, stacked vertically (only show after started) */}
-        {hasStarted && !isComplete && (
+        {/* Badges - only when audio is ACTUALLY playing */}
+        {isAudioPlaying && !isComplete && (
           <div className="flex flex-col items-center gap-2 mb-6 px-4 min-h-[180px] justify-end">
             <AnimatePresence>
               {currentBadges.map(badge => (
@@ -286,8 +293,8 @@ export default function DemoPage() {
           </div>
         )}
         
-        {/* Current transcript line (only show after started) */}
-        {hasStarted && !isComplete && (
+        {/* Transcript - only when audio is ACTUALLY playing */}
+        {isAudioPlaying && !isComplete && (
           <div className="w-full px-4 mb-6 min-h-[80px] flex items-center justify-center">
             <AnimatePresence mode="wait">
               {currentMessage && (
@@ -326,7 +333,7 @@ export default function DemoPage() {
           </motion.div>
         )}
 
-        {/* Controls - always at bottom */}
+        {/* Controls */}
         <div className="flex items-center gap-4">
           {isComplete ? (
             <Button
@@ -360,7 +367,7 @@ export default function DemoPage() {
                   <Play className="w-6 h-6 ml-0.5" />
                 )}
               </Button>
-              {hasStarted && (
+              {isAudioPlaying && (
                 <Button 
                   variant="ghost" 
                   onClick={handleSkip}
