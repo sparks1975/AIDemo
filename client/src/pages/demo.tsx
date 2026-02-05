@@ -20,10 +20,11 @@ import {
   CheckCircle,
   Clock,
   Mail,
-  Smartphone
+  Smartphone,
+  Loader2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { demoConversation, getBadgesAtTime, demoDuration, type ChatMessage, type Badge } from '@/lib/demo-script';
+import { demoConversation, getBadgesAtTime, demoDuration, type Badge } from '@/lib/demo-script';
 import { cn } from '@/lib/utils';
 
 const iconMap: Record<string, React.ElementType> = {
@@ -89,8 +90,9 @@ export default function DemoPage() {
   const [isMuted, setIsMuted] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
-  const [isAudioLoaded, setIsAudioLoaded] = useState(false);
-  const audioRef = useRef<HTMLAudioElement>(null);
+  const [isAudioReady, setIsAudioReady] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Only show badges/transcript if audio has started playing
   const currentBadges = hasStarted ? getBadgesAtTime(currentTime) : [];
@@ -99,13 +101,14 @@ export default function DemoPage() {
     ? demoConversation.filter(m => m.timestamp <= currentTime).pop()
     : null;
 
-  // Preload audio on mount
+  // Preload audio completely on mount
   useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
+    const audio = new Audio();
+    audio.preload = 'auto';
+    
     const handleCanPlayThrough = () => {
-      setIsAudioLoaded(true);
+      setIsAudioReady(true);
+      setIsLoading(false);
     };
 
     const handleTimeUpdate = () => {
@@ -117,38 +120,48 @@ export default function DemoPage() {
       setIsComplete(true);
     };
 
-    // Check if already loaded
-    if (audio.readyState >= 4) {
-      setIsAudioLoaded(true);
-    }
+    const handleError = () => {
+      console.error('Audio failed to load');
+      setIsLoading(false);
+    };
 
     audio.addEventListener('canplaythrough', handleCanPlayThrough);
     audio.addEventListener('timeupdate', handleTimeUpdate);
     audio.addEventListener('ended', handleEnded);
+    audio.addEventListener('error', handleError);
+
+    // Start loading the audio
+    audio.src = '/audio/demo-call.mp3';
+    audio.load();
+    
+    audioRef.current = audio;
 
     return () => {
       audio.removeEventListener('canplaythrough', handleCanPlayThrough);
       audio.removeEventListener('timeupdate', handleTimeUpdate);
       audio.removeEventListener('ended', handleEnded);
+      audio.removeEventListener('error', handleError);
+      audio.pause();
+      audio.src = '';
     };
   }, []);
 
   const handlePlay = useCallback(() => {
     const audio = audioRef.current;
-    if (!audio || !isAudioLoaded) return;
-
-    if (!hasStarted) {
-      setHasStarted(true);
-    }
+    if (!audio || !isAudioReady) return;
 
     if (isPlaying) {
       audio.pause();
       setIsPlaying(false);
     } else {
+      // Mark as started and play
+      if (!hasStarted) {
+        setHasStarted(true);
+      }
       audio.play();
       setIsPlaying(true);
     }
-  }, [isPlaying, hasStarted, isAudioLoaded]);
+  }, [isPlaying, hasStarted, isAudioReady]);
 
   const handleSkip = useCallback(() => {
     const audio = audioRef.current;
@@ -183,8 +196,6 @@ export default function DemoPage() {
 
   return (
     <div className="min-h-screen bg-[#F5F5F5] flex flex-col relative overflow-hidden">
-      <audio ref={audioRef} src="/audio/demo-call.mp3" preload="auto" />
-      
       {/* Subtle animated gradient background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div 
@@ -259,7 +270,7 @@ export default function DemoPage() {
               Hear Charlie in Action
             </h1>
             <p className="text-[#4D4D4D] text-sm">
-              Press play to hear an actual AI call
+              {isLoading ? 'Loading audio...' : 'Press play to hear an actual AI call'}
             </p>
           </motion.div>
         )}
@@ -333,13 +344,16 @@ export default function DemoPage() {
               <Button 
                 size="lg" 
                 onClick={handlePlay}
-                disabled={!isAudioLoaded}
-                className="w-14 h-14 rounded-full shadow-lg border-0 text-white disabled:opacity-50"
+                disabled={!isAudioReady}
+                className={cn(
+                  "w-14 h-14 rounded-full shadow-lg border-0 text-white transition-all",
+                  !isAudioReady && "opacity-50 cursor-not-allowed"
+                )}
                 style={{ backgroundColor: ALOHA_BLUE }}
                 data-testid="button-play-pause"
               >
-                {!isAudioLoaded ? (
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                {isLoading ? (
+                  <Loader2 className="w-6 h-6 animate-spin" />
                 ) : isPlaying ? (
                   <Pause className="w-6 h-6" />
                 ) : (
