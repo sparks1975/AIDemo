@@ -139,17 +139,17 @@ export default function DemoPage() {
       setIsLoading(false);
     };
 
-    // Update time from the actual audio element
-    // This is the ONLY reliable way to know audio is truly playing
-    let hasStarted = false;
     const handleTimeUpdate = () => {
-      const t = audio.currentTime;
-      if (!hasStarted && t > 0.05) {
-        hasStarted = true;
-        setIsStarting(false);
-        setAudioActuallyPlaying(true);
-      }
-      setCurrentTime(t);
+      setCurrentTime(audio.currentTime);
+    };
+
+    const handlePlaying = () => {
+      setIsStarting(false);
+      setAudioActuallyPlaying(true);
+    };
+
+    const handlePause = () => {
+      setAudioActuallyPlaying(false);
     };
 
     const handleEnded = () => {
@@ -158,14 +158,11 @@ export default function DemoPage() {
       setIsComplete(true);
     };
 
-    const handlePause = () => {
-      setAudioActuallyPlaying(false);
-    };
-
     audio.addEventListener('canplaythrough', handleCanPlayThrough);
     audio.addEventListener('timeupdate', handleTimeUpdate);
-    audio.addEventListener('ended', handleEnded);
+    audio.addEventListener('playing', handlePlaying);
     audio.addEventListener('pause', handlePause);
+    audio.addEventListener('ended', handleEnded);
 
     // Force load
     audio.load();
@@ -173,8 +170,9 @@ export default function DemoPage() {
     return () => {
       audio.removeEventListener('canplaythrough', handleCanPlayThrough);
       audio.removeEventListener('timeupdate', handleTimeUpdate);
-      audio.removeEventListener('ended', handleEnded);
+      audio.removeEventListener('playing', handlePlaying);
       audio.removeEventListener('pause', handlePause);
+      audio.removeEventListener('ended', handleEnded);
       audio.pause();
     };
   }, []);
