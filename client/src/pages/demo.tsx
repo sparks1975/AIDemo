@@ -87,77 +87,101 @@ export default function DemoPage() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
-  const [isAudioPlaying, setIsAudioPlaying] = useState(false); // True only when audio is ACTUALLY playing
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const [isAudioReady, setIsAudioReady] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loadingProgress, setLoadingProgress] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioBlobUrl = useRef<string | null>(null);
 
-  // Only show badges/transcript when audio is ACTUALLY playing (not just clicked)
   const currentBadges = isAudioPlaying ? getBadgesAtTime(currentTime) : [];
   
   const currentMessage = isAudioPlaying 
     ? demoConversation.filter(m => m.timestamp <= currentTime).pop()
     : null;
 
-  // Preload audio completely on mount
+  // Fetch entire audio file as blob before enabling play
   useEffect(() => {
-    const audio = new Audio();
-    audio.preload = 'auto';
+    const controller = new AbortController();
     
-    // Only mark ready when we can play through without buffering
-    const handleCanPlayThrough = () => {
-      setIsAudioReady(true);
-      setIsLoading(false);
-    };
-
-    // This fires when audio ACTUALLY starts playing
-    const handlePlaying = () => {
-      setIsAudioPlaying(true);
-      setIsPlaying(true);
-    };
-
-    const handlePause = () => {
-      setIsPlaying(false);
-    };
-
-    const handleTimeUpdate = () => {
-      setCurrentTime(audio.currentTime);
-    };
-
-    const handleEnded = () => {
-      setIsPlaying(false);
-      setIsAudioPlaying(false);
-      setIsComplete(true);
-    };
-
-    const handleWaiting = () => {
-      // Audio is buffering - should not happen if properly preloaded
-      console.log('Audio buffering...');
-    };
-
-    audio.addEventListener('canplaythrough', handleCanPlayThrough);
-    audio.addEventListener('playing', handlePlaying);
-    audio.addEventListener('pause', handlePause);
-    audio.addEventListener('timeupdate', handleTimeUpdate);
-    audio.addEventListener('ended', handleEnded);
-    audio.addEventListener('waiting', handleWaiting);
-
-    // Start loading
-    audio.src = '/audio/demo-call.mp3';
-    audio.load();
+    async function loadAudio() {
+      try {
+        const response = await fetch('/audio/demo-call.mp3', {
+          signal: controller.signal
+        });
+        
+        if (!response.ok) throw new Error('Failed to load audio');
+        
+        const reader = response.body?.getReader();
+        const contentLength = Number(response.headers.get('Content-Length')) || 0;
+        
+        let receivedLength = 0;
+        const chunks: Uint8Array[] = [];
+        
+        if (reader) {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            
+            chunks.push(value);
+            receivedLength += value.length;
+            
+            if (contentLength > 0) {
+              setLoadingProgress(Math.round((receivedLength / contentLength) * 100));
+            }
+          }
+        }
+        
+        // Create blob from chunks
+        const blob = new Blob(chunks, { type: 'audio/mpeg' });
+        const blobUrl = URL.createObjectURL(blob);
+        audioBlobUrl.current = blobUrl;
+        
+        // Create audio element with blob URL
+        const audio = new Audio(blobUrl);
+        audio.preload = 'auto';
+        
+        audio.addEventListener('playing', () => {
+          setIsAudioPlaying(true);
+          setIsPlaying(true);
+        });
+        
+        audio.addEventListener('pause', () => {
+          setIsPlaying(false);
+        });
+        
+        audio.addEventListener('timeupdate', () => {
+          setCurrentTime(audio.currentTime);
+        });
+        
+        audio.addEventListener('ended', () => {
+          setIsPlaying(false);
+          setIsAudioPlaying(false);
+          setIsComplete(true);
+        });
+        
+        audioRef.current = audio;
+        setIsAudioReady(true);
+        setLoadingProgress(100);
+        
+      } catch (err) {
+        if ((err as Error).name !== 'AbortError') {
+          console.error('Audio load error:', err);
+        }
+      }
+    }
     
-    audioRef.current = audio;
-
+    loadAudio();
+    
     return () => {
-      audio.removeEventListener('canplaythrough', handleCanPlayThrough);
-      audio.removeEventListener('playing', handlePlaying);
-      audio.removeEventListener('pause', handlePause);
-      audio.removeEventListener('timeupdate', handleTimeUpdate);
-      audio.removeEventListener('ended', handleEnded);
-      audio.removeEventListener('waiting', handleWaiting);
-      audio.pause();
-      audio.src = '';
+      controller.abort();
+      if (audioBlobUrl.current) {
+        URL.revokeObjectURL(audioBlobUrl.current);
+      }
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = '';
+      }
     };
   }, []);
 
@@ -168,7 +192,6 @@ export default function DemoPage() {
     if (isPlaying) {
       audio.pause();
     } else {
-      // Play - the 'playing' event will trigger UI update
       audio.play();
     }
   }, [isPlaying, isAudioReady]);
@@ -201,6 +224,8 @@ export default function DemoPage() {
       setIsMuted(!isMuted);
     }
   }, [isMuted]);
+
+  const isLoading = !isAudioReady;
 
   return (
     <div className="min-h-screen bg-[#F5F5F5] flex flex-col relative overflow-hidden">
@@ -277,7 +302,9 @@ export default function DemoPage() {
               Hear Charlie in Action
             </h1>
             <p className="text-[#4D4D4D] text-sm">
-              {isLoading ? 'Loading audio...' : 'Press play to hear an actual AI call'}
+              {isLoading 
+                ? `Loading audio... ${loadingProgress}%` 
+                : 'Press play to hear an actual AI call'}
             </p>
           </motion.div>
         )}
