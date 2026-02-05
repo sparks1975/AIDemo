@@ -44,7 +44,7 @@ const iconMap: Record<string, React.ElementType> = {
   'smartphone': Smartphone,
 };
 
-const ALOHA_BLUE = '#F59E0B';
+const ALOHA_BLUE = '#EC4899';
 
 function BadgeComponent({ badge }: { badge: Badge }) {
   const Icon = iconMap[badge.icon] || CheckCircle;
@@ -362,21 +362,15 @@ export default function DemoPage() {
         {/* Transcript - only after latency offset */}
         {showContent && !isComplete && (
           <div className="w-full px-4 mb-6 min-h-[80px] flex items-center justify-center">
-            <AnimatePresence mode="wait">
-              {currentMessage && (
-                <motion.p
-                  key={currentMessage.id}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.12 }}
-                  className="text-base md:text-lg text-black text-center leading-relaxed max-w-2xl"
-                  style={{ lineHeight: 1.5 }}
-                >
-                  {currentMessage.text}
-                </motion.p>
-              )}
-            </AnimatePresence>
+            {currentMessage && (
+              <p
+                key={currentMessage.id}
+                className="text-base md:text-lg text-black text-center leading-relaxed max-w-2xl"
+                style={{ lineHeight: 1.5 }}
+              >
+                {currentMessage.text}
+              </p>
+            )}
           </div>
         )}
 
