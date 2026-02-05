@@ -91,8 +91,15 @@ export default function DemoPage() {
   const [isComplete, setIsComplete] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isStarting, setIsStarting] = useState(false);
+  const [debugLog, setDebugLog] = useState<string[]>([]);
   
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  
+  const addDebug = (msg: string) => {
+    const timestamp = Date.now();
+    console.log(`[DEBUG ${timestamp}] ${msg}`);
+    setDebugLog(prev => [...prev.slice(-10), `${timestamp}: ${msg}`]);
+  };
 
   // Only show content when audio is ACTUALLY playing (playing event fired)
   const currentBadges = audioActuallyPlaying ? getBadgesAtTime(currentTime) : [];
@@ -109,11 +116,13 @@ export default function DemoPage() {
 
     // Audio is ready when it can play through
     const handleCanPlayThrough = () => {
+      addDebug('canplaythrough - audio ready');
       setIsLoading(false);
     };
 
     // THIS IS THE KEY: only show UI when audio is ACTUALLY playing
     const handlePlaying = () => {
+      addDebug(`playing event! currentTime=${audio.currentTime.toFixed(2)}`);
       setIsStarting(false);
       setAudioActuallyPlaying(true);
     };
@@ -124,14 +133,18 @@ export default function DemoPage() {
     };
 
     const handleEnded = () => {
+      addDebug('ended event');
       setIsPlaying(false);
       setAudioActuallyPlaying(false);
       setIsComplete(true);
     };
 
     const handlePause = () => {
+      addDebug('pause event');
       setAudioActuallyPlaying(false);
     };
+    
+    addDebug('Setting up audio element');
 
     audio.addEventListener('canplaythrough', handleCanPlayThrough);
     audio.addEventListener('playing', handlePlaying);
@@ -156,12 +169,16 @@ export default function DemoPage() {
     if (!audioRef.current || isLoading) return;
 
     if (isPlaying) {
+      addDebug('Pausing');
       audioRef.current.pause();
       setIsPlaying(false);
     } else {
-      setIsStarting(true); // Show "Starting demo..." state
-      audioRef.current.play().catch(err => {
-        console.error('Play error:', err);
+      addDebug('PLAY clicked');
+      setIsStarting(true);
+      audioRef.current.play().then(() => {
+        addDebug('play() promise resolved');
+      }).catch(err => {
+        addDebug(`play() error: ${err}`);
         setIsStarting(false);
       });
       setIsPlaying(true);
@@ -231,6 +248,14 @@ export default function DemoPage() {
             animationDelay: '10s'
           }} 
         />
+      </div>
+
+      {/* Debug panel - visible on screen */}
+      <div className="absolute top-4 left-4 z-40 bg-black/80 text-green-400 text-xs font-mono p-2 rounded max-w-xs max-h-40 overflow-auto">
+        <div className="font-bold mb-1">DEBUG:</div>
+        {debugLog.map((log, i) => (
+          <div key={i}>{log}</div>
+        ))}
       </div>
 
       {/* Top bar */}
