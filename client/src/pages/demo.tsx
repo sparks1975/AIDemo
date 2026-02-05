@@ -91,15 +91,8 @@ export default function DemoPage() {
   const [isComplete, setIsComplete] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isStarting, setIsStarting] = useState(false);
-  const [debugLog, setDebugLog] = useState<string[]>([]);
   
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  
-  const addDebug = (msg: string) => {
-    const timestamp = Date.now();
-    console.log(`[DEBUG ${timestamp}] ${msg}`);
-    setDebugLog(prev => [...prev.slice(-10), `${timestamp}: ${msg}`]);
-  };
 
   // audioActuallyPlaying is now only true when currentTime has advanced
   // So we can trust it directly
@@ -117,39 +110,17 @@ export default function DemoPage() {
     audio.preload = 'auto';
     audioRef.current = audio;
 
-    // Audio is ready when it can play through
     const handleCanPlayThrough = () => {
-      addDebug('canplaythrough - audio ready');
       setIsLoading(false);
     };
-
-    // Don't trust "playing" event - it fires before audio actually outputs
-    const handlePlaying = () => {
-      addDebug(`playing! time=${audio.currentTime.toFixed(2)} (waiting for time to advance)`);
-      // Don't set audioActuallyPlaying here - wait for timeupdate
-    };
-    
-    // Additional events to track buffering issues
-    const handleWaiting = () => {
-      addDebug('WAITING - audio is buffering!');
-    };
-    
-    const handleStalled = () => {
-      addDebug('STALLED - download stalled!');
-    };
-    
-    audio.addEventListener('waiting', handleWaiting);
-    audio.addEventListener('stalled', handleStalled);
 
     // Update time from the actual audio element
     // This is the ONLY reliable way to know audio is truly playing
     let hasStarted = false;
     const handleTimeUpdate = () => {
       const t = audio.currentTime;
-      // Only set audioActuallyPlaying when time actually advances
       if (!hasStarted && t > 0.05) {
         hasStarted = true;
-        addDebug(`AUDIO STARTED! time=${t.toFixed(2)}`);
         setIsStarting(false);
         setAudioActuallyPlaying(true);
       }
@@ -157,21 +128,16 @@ export default function DemoPage() {
     };
 
     const handleEnded = () => {
-      addDebug('ended event');
       setIsPlaying(false);
       setAudioActuallyPlaying(false);
       setIsComplete(true);
     };
 
     const handlePause = () => {
-      addDebug('pause event');
       setAudioActuallyPlaying(false);
     };
-    
-    addDebug('Setting up audio element');
 
     audio.addEventListener('canplaythrough', handleCanPlayThrough);
-    audio.addEventListener('playing', handlePlaying);
     audio.addEventListener('timeupdate', handleTimeUpdate);
     audio.addEventListener('ended', handleEnded);
     audio.addEventListener('pause', handlePause);
@@ -181,12 +147,9 @@ export default function DemoPage() {
 
     return () => {
       audio.removeEventListener('canplaythrough', handleCanPlayThrough);
-      audio.removeEventListener('playing', handlePlaying);
       audio.removeEventListener('timeupdate', handleTimeUpdate);
       audio.removeEventListener('ended', handleEnded);
       audio.removeEventListener('pause', handlePause);
-      audio.removeEventListener('waiting', handleWaiting);
-      audio.removeEventListener('stalled', handleStalled);
       audio.pause();
     };
   }, []);
@@ -195,16 +158,12 @@ export default function DemoPage() {
     if (!audioRef.current || isLoading) return;
 
     if (isPlaying) {
-      addDebug('Pausing');
       audioRef.current.pause();
       setIsPlaying(false);
     } else {
-      addDebug('PLAY clicked');
       setIsStarting(true);
-      audioRef.current.play().then(() => {
-        addDebug('play() promise resolved');
-      }).catch(err => {
-        addDebug(`play() error: ${err}`);
+      audioRef.current.play().catch(err => {
+        console.error('Play error:', err);
         setIsStarting(false);
       });
       setIsPlaying(true);
@@ -274,14 +233,6 @@ export default function DemoPage() {
             animationDelay: '10s'
           }} 
         />
-      </div>
-
-      {/* Debug panel - visible on screen */}
-      <div className="absolute top-4 left-4 z-40 bg-black/80 text-green-400 text-xs font-mono p-2 rounded max-w-xs max-h-40 overflow-auto">
-        <div className="font-bold mb-1">DEBUG:</div>
-        {debugLog.map((log, i) => (
-          <div key={i}>{log}</div>
-        ))}
       </div>
 
       {/* Top bar */}
