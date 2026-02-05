@@ -62,22 +62,22 @@ function StatusCardComponent({ card }: { card: StatusCard }) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: -30, scale: 0.9 }}
-      animate={{ opacity: 1, x: 0, scale: 1 }}
-      exit={{ opacity: 0, x: -20, scale: 0.95 }}
+      initial={{ opacity: 0, y: 20, scale: 0.9 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.95 }}
       transition={{ type: 'spring', damping: 25, stiffness: 350 }}
       className={cn(
-        'flex items-center gap-3 px-4 py-3 rounded-xl border backdrop-blur-md shadow-xl',
+        'flex items-center gap-2 px-3 py-2 rounded-lg border backdrop-blur-md shadow-lg',
         colorClasses[card.color || 'default']
       )}
       data-testid={`status-card-${card.id}`}
     >
       <div className={cn('flex-shrink-0', iconColorClasses[card.color || 'default'])}>
-        <Icon className="w-5 h-5" />
+        <Icon className="w-4 h-4" />
       </div>
       <div className="flex flex-col min-w-0">
-        <span className="text-[11px] font-medium text-slate-400 uppercase tracking-wide">{card.label}</span>
-        <span className="text-sm font-semibold text-white">{card.value}</span>
+        <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wide leading-tight">{card.label}</span>
+        <span className="text-xs font-semibold text-white leading-tight">{card.value}</span>
       </div>
     </motion.div>
   );
@@ -91,10 +91,8 @@ export default function DemoPage() {
   const [isComplete, setIsComplete] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  // Get visible cards and current message based on current time
   const visibleCards = statusCards.filter(c => c.timestamp <= currentTime);
   
-  // Find the current message (the one that should be displayed now)
   const currentMessage = demoConversation
     .filter(m => m.timestamp <= currentTime)
     .pop();
@@ -179,13 +177,26 @@ export default function DemoPage() {
         <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl" />
       </div>
 
-      {/* Status cards - floating on left side */}
-      <div className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-20 w-64 md:w-72 space-y-3 max-h-[70vh] overflow-hidden">
-        <AnimatePresence>
-          {hasStarted && visibleCards.slice(-6).map(card => (
-            <StatusCardComponent key={card.id} card={card} />
-          ))}
-        </AnimatePresence>
+      {/* Mute button - top right */}
+      <div className="absolute top-4 right-4 z-30 flex items-center gap-2">
+        <Button 
+          variant="ghost" 
+          size="icon"
+          className="text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-full"
+          onClick={toggleMute}
+          data-testid="button-mute"
+        >
+          {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+        </Button>
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-full text-xs"
+          asChild
+          data-testid="button-embed-info"
+        >
+          <a href="/instructions">Embed</a>
+        </Button>
       </div>
 
       {/* Main content area */}
@@ -230,27 +241,62 @@ export default function DemoPage() {
           </motion.div>
         )}
 
-        {/* Playing state - centered transcript */}
+        {/* Playing state */}
         {hasStarted && !isComplete && (
-          <div className="flex flex-col items-center justify-center flex-1 w-full max-w-2xl mx-auto">
-            {/* Current transcript line - centered, fading */}
-            <div className="flex-1 flex items-center justify-center w-full px-4">
+          <div className="flex flex-col items-center justify-end flex-1 w-full max-w-3xl mx-auto pb-8">
+            {/* Spacer to push content down */}
+            <div className="flex-1" />
+            
+            {/* Status cards - centered, horizontal wrap */}
+            <div className="flex flex-wrap justify-center gap-2 mb-6 px-4">
+              <AnimatePresence>
+                {visibleCards.slice(-6).map(card => (
+                  <StatusCardComponent key={card.id} card={card} />
+                ))}
+              </AnimatePresence>
+            </div>
+            
+            {/* Current transcript line - centered at bottom, smaller text */}
+            <div className="w-full px-4 mb-6 min-h-[80px] flex items-center justify-center">
               <AnimatePresence mode="wait">
                 {currentMessage && (
-                  <motion.div
+                  <motion.p
                     key={currentMessage.id}
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.4 }}
-                    className="text-center"
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.3 }}
+                    className="text-base md:text-lg text-white/90 text-center leading-relaxed max-w-2xl"
                   >
-                    <p className="text-2xl md:text-3xl lg:text-4xl font-medium text-white leading-relaxed">
-                      {currentMessage.text}
-                    </p>
-                  </motion.div>
+                    {currentMessage.text}
+                  </motion.p>
                 )}
               </AnimatePresence>
+            </div>
+
+            {/* Controls */}
+            <div className="flex items-center gap-4">
+              <Button 
+                size="lg" 
+                onClick={handlePlay}
+                className="w-12 h-12 rounded-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 shadow-xl shadow-purple-500/30 border-0"
+                data-testid="button-play-pause"
+              >
+                {isPlaying ? (
+                  <Pause className="w-5 h-5 text-white" />
+                ) : (
+                  <Play className="w-5 h-5 text-white ml-0.5" />
+                )}
+              </Button>
+              <Button 
+                variant="ghost" 
+                onClick={handleSkip}
+                className="text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-full px-6"
+                data-testid="button-skip"
+              >
+                <SkipForward className="w-4 h-4 mr-2" />
+                Skip Demo
+              </Button>
             </div>
           </div>
         )}
@@ -285,58 +331,6 @@ export default function DemoPage() {
           </motion.div>
         )}
       </main>
-
-      {/* Bottom controls - only show when playing */}
-      {hasStarted && !isComplete && (
-        <div className="relative z-20 pb-8 flex flex-col items-center gap-4">
-          {/* Play/Pause and Skip controls */}
-          <div className="flex items-center gap-4">
-            <Button 
-              size="lg" 
-              onClick={handlePlay}
-              className="w-14 h-14 rounded-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 shadow-xl shadow-purple-500/30 border-0"
-              data-testid="button-play-pause"
-            >
-              {isPlaying ? (
-                <Pause className="w-6 h-6 text-white" />
-              ) : (
-                <Play className="w-6 h-6 text-white ml-0.5" />
-              )}
-            </Button>
-            <Button 
-              variant="ghost" 
-              onClick={handleSkip}
-              className="text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-full px-6"
-              data-testid="button-skip"
-            >
-              <SkipForward className="w-4 h-4 mr-2" />
-              Skip Demo
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {/* Mute button - top right */}
-      <div className="absolute top-4 right-4 z-30 flex items-center gap-2">
-        <Button 
-          variant="ghost" 
-          size="icon"
-          className="text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-full"
-          onClick={toggleMute}
-          data-testid="button-mute"
-        >
-          {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-        </Button>
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className="text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-full text-xs"
-          asChild
-          data-testid="button-embed-info"
-        >
-          <a href="/instructions">Embed</a>
-        </Button>
-      </div>
     </div>
   );
 }
