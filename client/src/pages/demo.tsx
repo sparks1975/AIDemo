@@ -85,231 +85,124 @@ function BadgeComponent({ badge }: { badge: Badge }) {
 
 export default function DemoPage() {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [audioActuallyPlaying, setAudioActuallyPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
-  const [isAudioReady, setIsAudioReady] = useState(false);
-  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isStarting, setIsStarting] = useState(false);
   
-  // Web Audio API refs
-  const audioContextRef = useRef<AudioContext | null>(null);
-  const audioBufferRef = useRef<AudioBuffer | null>(null);
-  const sourceNodeRef = useRef<AudioBufferSourceNode | null>(null);
-  const gainNodeRef = useRef<GainNode | null>(null);
-  const startTimeRef = useRef<number>(0);
-  const pausedAtRef = useRef<number>(0);
-  const animationFrameRef = useRef<number>(0);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Audio system latency compensation - UI waits this long before showing anything
-  // This accounts for the delay between calling start() and actual sound output
-  const AUDIO_LATENCY = 0.8; // 800ms buffer for audio to actually start playing
+  // Only show content when audio is ACTUALLY playing (playing event fired)
+  const currentBadges = audioActuallyPlaying ? getBadgesAtTime(currentTime) : [];
   
-  // Only show content after audio has had time to actually start
-  const audioHasStarted = isPlaying && currentTime > AUDIO_LATENCY;
-  
-  // Adjust the time for transcript/badge lookup to match what's actually playing
-  // UI time is current time minus the latency buffer
-  const uiTime = Math.max(0, currentTime - AUDIO_LATENCY);
-  
-  const currentBadges = audioHasStarted ? getBadgesAtTime(uiTime) : [];
-  
-  const currentMessage = audioHasStarted 
-    ? demoConversation.filter(m => m.timestamp <= uiTime).pop()
+  const currentMessage = audioActuallyPlaying 
+    ? demoConversation.filter(m => m.timestamp <= currentTime).pop()
     : null;
 
-  // Load and decode audio on mount
+  // Set up audio element
   useEffect(() => {
-    const controller = new AbortController();
-    
-    async function loadAndDecodeAudio() {
-      try {
-        // Create audio context
-        const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-        audioContextRef.current = audioContext;
-        
-        // Create gain node for mute control
-        const gainNode = audioContext.createGain();
-        gainNode.connect(audioContext.destination);
-        gainNodeRef.current = gainNode;
-        
-        // Fetch audio file
-        const response = await fetch('/audio/demo-call.mp3', {
-          signal: controller.signal
-        });
-        
-        if (!response.ok) throw new Error('Failed to load audio');
-        
-        const reader = response.body?.getReader();
-        const contentLength = Number(response.headers.get('Content-Length')) || 0;
-        
-        let receivedLength = 0;
-        const chunks: Uint8Array[] = [];
-        
-        if (reader) {
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-            
-            chunks.push(value);
-            receivedLength += value.length;
-            
-            if (contentLength > 0) {
-              setLoadingProgress(Math.round((receivedLength / contentLength) * 80)); // 80% for download
-            }
-          }
-        }
-        
-        // Combine chunks into array buffer
-        const totalLength = chunks.reduce((acc, chunk) => acc + chunk.length, 0);
-        const audioData = new Uint8Array(totalLength);
-        let position = 0;
-        for (const chunk of chunks) {
-          audioData.set(chunk, position);
-          position += chunk.length;
-        }
-        
-        setLoadingProgress(85); // Start decoding
-        
-        // Decode audio data - this is the key step for instant playback
-        const audioBuffer = await audioContext.decodeAudioData(audioData.buffer);
-        audioBufferRef.current = audioBuffer;
-        
-        setLoadingProgress(100);
-        setIsAudioReady(true);
-        
-      } catch (err) {
-        if ((err as Error).name !== 'AbortError') {
-          console.error('Audio load error:', err);
-        }
-      }
-    }
-    
-    loadAndDecodeAudio();
-    
+    const audio = new Audio('/audio/demo-call.mp3');
+    audio.preload = 'auto';
+    audioRef.current = audio;
+
+    // Audio is ready when it can play through
+    const handleCanPlayThrough = () => {
+      setIsLoading(false);
+    };
+
+    // THIS IS THE KEY: only show UI when audio is ACTUALLY playing
+    const handlePlaying = () => {
+      setIsStarting(false);
+      setAudioActuallyPlaying(true);
+    };
+
+    // Update time from the actual audio element
+    const handleTimeUpdate = () => {
+      setCurrentTime(audio.currentTime);
+    };
+
+    const handleEnded = () => {
+      setIsPlaying(false);
+      setAudioActuallyPlaying(false);
+      setIsComplete(true);
+    };
+
+    const handlePause = () => {
+      setAudioActuallyPlaying(false);
+    };
+
+    audio.addEventListener('canplaythrough', handleCanPlayThrough);
+    audio.addEventListener('playing', handlePlaying);
+    audio.addEventListener('timeupdate', handleTimeUpdate);
+    audio.addEventListener('ended', handleEnded);
+    audio.addEventListener('pause', handlePause);
+
+    // Force load
+    audio.load();
+
     return () => {
-      controller.abort();
-      cancelAnimationFrame(animationFrameRef.current);
-      if (sourceNodeRef.current) {
-        try { sourceNodeRef.current.stop(); } catch {}
-      }
-      if (audioContextRef.current) {
-        audioContextRef.current.close();
-      }
+      audio.removeEventListener('canplaythrough', handleCanPlayThrough);
+      audio.removeEventListener('playing', handlePlaying);
+      audio.removeEventListener('timeupdate', handleTimeUpdate);
+      audio.removeEventListener('ended', handleEnded);
+      audio.removeEventListener('pause', handlePause);
+      audio.pause();
     };
   }, []);
 
-  // Update current time while playing
-  const updateTime = useCallback(() => {
-    if (!audioContextRef.current || !isPlaying) return;
-    
-    const elapsed = audioContextRef.current.currentTime - startTimeRef.current + pausedAtRef.current;
-    setCurrentTime(elapsed);
-    
-    if (elapsed >= demoDuration) {
-      setIsPlaying(false);
-      setIsComplete(true);
-      return;
-    }
-    
-    animationFrameRef.current = requestAnimationFrame(updateTime);
-  }, [isPlaying]);
-
-  useEffect(() => {
-    if (isPlaying) {
-      animationFrameRef.current = requestAnimationFrame(updateTime);
-    }
-    return () => cancelAnimationFrame(animationFrameRef.current);
-  }, [isPlaying, updateTime]);
-
   const handlePlay = useCallback(() => {
-    if (!audioContextRef.current || !audioBufferRef.current || !gainNodeRef.current || !isAudioReady) return;
+    if (!audioRef.current || isLoading) return;
 
     if (isPlaying) {
-      // Pause
-      if (sourceNodeRef.current) {
-        sourceNodeRef.current.stop();
-        sourceNodeRef.current = null;
-      }
-      pausedAtRef.current = currentTime;
+      audioRef.current.pause();
       setIsPlaying(false);
     } else {
-      // Resume audio context if suspended (browser autoplay policy)
-      if (audioContextRef.current.state === 'suspended') {
-        audioContextRef.current.resume();
-      }
-      
-      // Create new source node (required for each play)
-      const source = audioContextRef.current.createBufferSource();
-      source.buffer = audioBufferRef.current;
-      source.connect(gainNodeRef.current);
-      
-      source.onended = () => {
-        setIsPlaying(false);
-        setIsComplete(true);
-      };
-      
-      // Start playback and immediately set start time reference
-      startTimeRef.current = audioContextRef.current.currentTime;
-      source.start(0, pausedAtRef.current);
-      sourceNodeRef.current = source;
-      
+      setIsStarting(true); // Show "Starting demo..." state
+      audioRef.current.play().catch(err => {
+        console.error('Play error:', err);
+        setIsStarting(false);
+      });
       setIsPlaying(true);
     }
-  }, [isPlaying, isAudioReady, currentTime]);
+  }, [isPlaying, isLoading]);
 
   const handleSkip = useCallback(() => {
-    if (sourceNodeRef.current) {
-      try { sourceNodeRef.current.stop(); } catch {}
-      sourceNodeRef.current = null;
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = demoDuration;
     }
     setIsPlaying(false);
+    setAudioActuallyPlaying(false);
     setCurrentTime(demoDuration);
     setIsComplete(true);
   }, []);
 
   const handleReplay = useCallback(() => {
-    if (!audioContextRef.current || !audioBufferRef.current || !gainNodeRef.current) return;
+    if (!audioRef.current) return;
     
-    // Stop current if playing
-    if (sourceNodeRef.current) {
-      try { sourceNodeRef.current.stop(); } catch {}
-    }
-    
-    // Reset
-    pausedAtRef.current = 0;
+    audioRef.current.currentTime = 0;
     setCurrentTime(0);
     setIsComplete(false);
+    setIsStarting(true);
     
-    // Resume context if needed
-    if (audioContextRef.current.state === 'suspended') {
-      audioContextRef.current.resume();
-    }
-    
-    // Create new source
-    const source = audioContextRef.current.createBufferSource();
-    source.buffer = audioBufferRef.current;
-    source.connect(gainNodeRef.current);
-    
-    source.onended = () => {
-      setIsPlaying(false);
-      setIsComplete(true);
-    };
-    
-    startTimeRef.current = audioContextRef.current.currentTime;
-    source.start(0, 0);
-    sourceNodeRef.current = source;
-    
+    audioRef.current.play().catch(err => {
+      console.error('Play error:', err);
+      setIsStarting(false);
+    });
     setIsPlaying(true);
   }, []);
 
   const toggleMute = useCallback(() => {
-    if (gainNodeRef.current) {
-      gainNodeRef.current.gain.value = isMuted ? 1 : 0;
+    if (audioRef.current) {
+      audioRef.current.muted = !isMuted;
       setIsMuted(!isMuted);
     }
   }, [isMuted]);
 
-  const isLoading = !isAudioReady;
+  // Show starting state between click and actual playback
+  const showStartingState = isStarting && !audioActuallyPlaying;
 
   return (
     <div className="min-h-screen bg-[#F5F5F5] flex flex-col relative overflow-hidden">
@@ -366,8 +259,8 @@ export default function DemoPage() {
       <main className="flex-1 flex flex-col items-center justify-end relative z-10 px-4 pb-8">
         <div className="flex-1" />
         
-        {/* Title - show when audio hasn't actually started */}
-        {!audioHasStarted && !isComplete && (
+        {/* Title - show when not started */}
+        {!audioActuallyPlaying && !isComplete && !showStartingState && (
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -386,15 +279,38 @@ export default function DemoPage() {
               Hear Charlie in Action
             </h1>
             <p className="text-[#4D4D4D] text-sm">
-              {isLoading 
-                ? `Loading audio... ${loadingProgress}%` 
-                : 'Press play to hear an actual AI call'}
+              {isLoading ? 'Loading audio...' : 'Press play to hear an actual AI call'}
+            </p>
+          </motion.div>
+        )}
+
+        {/* Starting state - like Arini */}
+        {showStartingState && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex flex-col items-center text-center mb-8"
+          >
+            <div className="relative mb-6">
+              <div 
+                className="w-20 h-20 rounded-full flex items-center justify-center shadow-lg"
+                style={{ backgroundColor: ALOHA_BLUE }}
+              >
+                <Loader2 className="w-10 h-10 text-white animate-spin" />
+              </div>
+            </div>
+            
+            <h1 className="text-2xl md:text-3xl font-extrabold text-black mb-2" style={{ lineHeight: 1.2 }}>
+              Starting demo...
+            </h1>
+            <p className="text-[#4D4D4D] text-sm">
+              For the full experience, ensure your volume is on.
             </p>
           </motion.div>
         )}
         
-        {/* Badges - only when audio has actually started */}
-        {audioHasStarted && !isComplete && (
+        {/* Badges - only when audio is ACTUALLY playing */}
+        {audioActuallyPlaying && !isComplete && (
           <div className="flex flex-col items-center gap-2 mb-6 px-4 min-h-[180px] justify-end">
             <AnimatePresence>
               {currentBadges.map(badge => (
@@ -404,8 +320,8 @@ export default function DemoPage() {
           </div>
         )}
         
-        {/* Transcript - only when audio has actually started */}
-        {audioHasStarted && !isComplete && (
+        {/* Transcript - only when audio is ACTUALLY playing */}
+        {audioActuallyPlaying && !isComplete && (
           <div className="w-full px-4 mb-6 min-h-[80px] flex items-center justify-center">
             <AnimatePresence mode="wait">
               {currentMessage && (
@@ -462,15 +378,15 @@ export default function DemoPage() {
               <Button 
                 size="lg" 
                 onClick={handlePlay}
-                disabled={!isAudioReady}
+                disabled={isLoading || showStartingState}
                 className={cn(
                   "w-14 h-14 rounded-full shadow-lg border-0 text-white transition-all",
-                  !isAudioReady && "opacity-50 cursor-not-allowed"
+                  (isLoading || showStartingState) && "opacity-50 cursor-not-allowed"
                 )}
                 style={{ backgroundColor: ALOHA_BLUE }}
                 data-testid="button-play-pause"
               >
-                {isLoading ? (
+                {isLoading || showStartingState ? (
                   <Loader2 className="w-6 h-6 animate-spin" />
                 ) : isPlaying ? (
                   <Pause className="w-6 h-6" />
@@ -478,7 +394,7 @@ export default function DemoPage() {
                   <Play className="w-6 h-6 ml-0.5" />
                 )}
               </Button>
-              {audioHasStarted && (
+              {audioActuallyPlaying && (
                 <Button 
                   variant="ghost" 
                   onClick={handleSkip}
