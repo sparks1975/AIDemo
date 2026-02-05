@@ -26,24 +26,25 @@ export interface Badge {
 }
 
 // Conversation transcript synced to your audio
+// Timestamps based on actual audio timing
 export const demoConversation: ChatMessage[] = [
-  { id: 1, speaker: 'ai', text: "Hello and thanks for calling Aloha, my name is Charlie, the AI receptionist. How can I help you today?", timestamp: 0 },
-  { id: 2, speaker: 'caller', text: "Hi Charlie, my name's Megan, I am new to town and I'm looking for a new chiropractor. Are you guys accepting new patients?", timestamp: 8 },
-  { id: 3, speaker: 'ai', text: "Yes, we are accepting new patients. I can help you schedule an appointment. May I have your last name, please?", timestamp: 15 },
-  { id: 4, speaker: 'caller', text: "Yeah, it's Jones.", timestamp: 21 },
-  { id: 5, speaker: 'ai', text: "Thank you. That's Jones, spelled J-O-N-E-S, correct?", timestamp: 23 },
-  { id: 6, speaker: 'caller', text: "Yeah, you got it.", timestamp: 28 },
-  { id: 7, speaker: 'ai', text: "Great. Could you please provide your date of birth?", timestamp: 29 },
-  { id: 8, speaker: 'caller', text: "September 22nd, 1995.", timestamp: 31 },
-  { id: 9, speaker: 'ai', text: "Thank you. Just to confirm, your date of birth is September 22nd, 1995. Is that correct?", timestamp: 34 },
-  { id: 10, speaker: 'caller', text: "Yes.", timestamp: 40 },
-  { id: 11, speaker: 'ai', text: "Thank you for your patience. We can proceed with scheduling your appointment. Do you have a specific date in mind, or would you like me to look for the earliest available time?", timestamp: 41 },
-  { id: 12, speaker: 'caller', text: "I'm usually free Thursdays and Fridays. So, how about let's check this Thursday?", timestamp: 52 },
+  { id: 1, speaker: 'ai', text: "Hello and thanks for calling Aloha. My name is Charlie, the AI receptionist. How can I help you today?", timestamp: 0 },
+  { id: 2, speaker: 'caller', text: "Hi Charlie, my name's Megan. I'm new to town and I'm looking for a new chiropractor. Are you guys accepting new patients?", timestamp: 8 },
+  { id: 3, speaker: 'ai', text: "Yes, we are accepting new patients. I can help you schedule an appointment. May I have your last name, please?", timestamp: 16 },
+  { id: 4, speaker: 'caller', text: "Yes, it's Jones.", timestamp: 24 },
+  { id: 5, speaker: 'ai', text: "Thank you. That's Jones, spelled J-O-N-E-S, correct?", timestamp: 25 },
+  { id: 6, speaker: 'caller', text: "Yeah, you got it.", timestamp: 31 },
+  { id: 7, speaker: 'ai', text: "Great. Could you please provide your date of birth?", timestamp: 33 },
+  { id: 8, speaker: 'caller', text: "September 22nd, 1995.", timestamp: 35 },
+  { id: 9, speaker: 'ai', text: "Thank you. Just to confirm, your date of birth is September 22nd, 1995. Is that correct?", timestamp: 39 },
+  { id: 10, speaker: 'caller', text: "Yes.", timestamp: 45 },
+  { id: 11, speaker: 'ai', text: "Thank you for your patience. We can proceed with scheduling your appointment. Do you have a specific date in mind, or would you like me to look for the earliest available time?", timestamp: 46 },
+  { id: 12, speaker: 'caller', text: "I'm usually free Thursdays and Fridays, so how about let's check this Thursday?", timestamp: 54 },
   { id: 13, speaker: 'ai', text: "We have some available slots for this Thursday, October 9th. Here are a few options: 9:00 in the morning, 9:15 in the morning, 9:30 in the morning. Do any of these times work for you?", timestamp: 60 },
-  { id: 14, speaker: 'caller', text: "9:30 should work, yeah.", timestamp: 72 },
+  { id: 14, speaker: 'caller', text: "9:30 should work. Yeah.", timestamp: 72 },
   { id: 15, speaker: 'ai', text: "Your appointment is successfully scheduled for Thursday, October the 9th at 9:30 in the morning. Is there anything else I can assist you with today?", timestamp: 75 },
-  { id: 16, speaker: 'caller', text: "No, that was everything. Thank you so much.", timestamp: 85 },
-  { id: 17, speaker: 'ai', text: "You're welcome. Have a great day and we look forward to seeing you soon. Goodbye.", timestamp: 89 },
+  { id: 16, speaker: 'caller', text: "No, that was everything. Thank you so much.", timestamp: 86 },
+  { id: 17, speaker: 'ai', text: "You're welcome. Have a great day and we look forward to seeing you soon. Goodbye.", timestamp: 90 },
 ];
 
 // Badge updates - each update modifies an existing badge or creates it
@@ -53,29 +54,29 @@ export const badgeUpdates: BadgeUpdate[] = [
   // Call status badge - appears at start
   { badgeId: 'call', icon: 'phone', label: 'Call Status', value: 'Charlie answering...', timestamp: 0, color: 'success' },
   
-  // Request type - after caller says "new patient" (audio at 8-14s)
-  { badgeId: 'request', icon: 'clipboard', label: 'Request', value: 'New Patient Booking', timestamp: 14, color: 'info' },
+  // Request type - after caller mentions "new patient" (audio ends at 16s)
+  { badgeId: 'request', icon: 'clipboard', label: 'Request', value: 'New Patient Booking', timestamp: 16, color: 'info' },
   
-  // Patient badge - after AI asks for name (audio at 15-21s)
-  { badgeId: 'patient', icon: 'user', label: 'Patient', value: 'Collecting info...', timestamp: 21, color: 'default' },
-  // After caller says "Jones" and AI confirms spelling (audio at 21-28s)
-  { badgeId: 'patient', icon: 'user', label: 'Patient', value: 'Megan Jones', timestamp: 28, color: 'info' },
-  // After caller confirms DOB (audio at 34-40s, confirmed at 40)
-  { badgeId: 'patient', icon: 'user', label: 'Patient', value: 'Megan Jones • 09/22/1995', timestamp: 41, color: 'success' },
+  // Patient badge - after AI asks for name (audio at 16-24s)
+  { badgeId: 'patient', icon: 'user', label: 'Patient', value: 'Collecting info...', timestamp: 24, color: 'default' },
+  // After caller says "Jones" and AI confirms spelling (ends at 31s)
+  { badgeId: 'patient', icon: 'user', label: 'Patient', value: 'Megan Jones', timestamp: 31, color: 'info' },
+  // After caller confirms DOB "Yes" (at 45s)
+  { badgeId: 'patient', icon: 'user', label: 'Patient', value: 'Megan Jones • 09/22/1995', timestamp: 46, color: 'success' },
   
-  // Appointment badge - after caller asks about Thursday (audio at 52-59s)
-  { badgeId: 'appointment', icon: 'calendar', label: 'Appointment', value: 'Checking availability...', timestamp: 59, color: 'default' },
-  // After AI lists available times (audio at 60-72s)
+  // Appointment badge - after caller asks about Thursday (ends at 60s)
+  { badgeId: 'appointment', icon: 'calendar', label: 'Appointment', value: 'Checking availability...', timestamp: 60, color: 'default' },
+  // After AI lists available times (ends at 72s)
   { badgeId: 'appointment', icon: 'calendar', label: 'Appointment', value: 'Thu Oct 9: 9:00, 9:15, 9:30 AM', timestamp: 72, color: 'info' },
-  // After AI confirms booking (audio at 75-85s)
-  { badgeId: 'appointment', icon: 'calendar-check', label: 'Appointment', value: 'Booked: Thu Oct 9 @ 9:30 AM', timestamp: 85, color: 'success' },
+  // After AI confirms booking (ends at 86s)
+  { badgeId: 'appointment', icon: 'calendar-check', label: 'Appointment', value: 'Booked: Thu Oct 9 @ 9:30 AM', timestamp: 86, color: 'success' },
   
-  // Call status updates after goodbye (audio at 89s)
-  { badgeId: 'call', icon: 'check-circle', label: 'Call Status', value: 'Complete', timestamp: 93, color: 'success' },
+  // Call status updates after goodbye (ends at 96s)
+  { badgeId: 'call', icon: 'check-circle', label: 'Call Status', value: 'Complete', timestamp: 96, color: 'success' },
 ];
 
 // Total duration of the demo in seconds
-export const demoDuration = 95;
+export const demoDuration = 96;
 
 // Helper to get current badge states at a given time
 export function getBadgesAtTime(time: number): Badge[] {
