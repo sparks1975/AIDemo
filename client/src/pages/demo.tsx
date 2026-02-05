@@ -44,7 +44,7 @@ const iconMap: Record<string, React.ElementType> = {
   'smartphone': Smartphone,
 };
 
-const ALOHA_BLUE = '#10B981';
+const ALOHA_BLUE = '#F59E0B';
 
 function BadgeComponent({ badge }: { badge: Badge }) {
   const Icon = iconMap[badge.icon] || CheckCircle;
@@ -366,10 +366,10 @@ export default function DemoPage() {
               {currentMessage && (
                 <motion.p
                   key={currentMessage.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.3 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.12 }}
                   className="text-base md:text-lg text-black text-center leading-relaxed max-w-2xl"
                   style={{ lineHeight: 1.5 }}
                 >
