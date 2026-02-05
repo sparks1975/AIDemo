@@ -100,13 +100,21 @@ export default function DemoPage() {
   const pausedAtRef = useRef<number>(0);
   const animationFrameRef = useRef<number>(0);
 
-  // Only show content when audio is playing and time > 0
-  const audioHasStarted = isPlaying && currentTime > 0;
+  // Audio system latency compensation - UI waits this long before showing anything
+  // This accounts for the delay between calling start() and actual sound output
+  const AUDIO_LATENCY = 0.8; // 800ms buffer for audio to actually start playing
   
-  const currentBadges = audioHasStarted ? getBadgesAtTime(currentTime) : [];
+  // Only show content after audio has had time to actually start
+  const audioHasStarted = isPlaying && currentTime > AUDIO_LATENCY;
+  
+  // Adjust the time for transcript/badge lookup to match what's actually playing
+  // UI time is current time minus the latency buffer
+  const uiTime = Math.max(0, currentTime - AUDIO_LATENCY);
+  
+  const currentBadges = audioHasStarted ? getBadgesAtTime(uiTime) : [];
   
   const currentMessage = audioHasStarted 
-    ? demoConversation.filter(m => m.timestamp <= currentTime).pop()
+    ? demoConversation.filter(m => m.timestamp <= uiTime).pop()
     : null;
 
   // Load and decode audio on mount
@@ -236,13 +244,11 @@ export default function DemoPage() {
       source.connect(gainNodeRef.current);
       
       source.onended = () => {
-        if (isPlaying) {
-          setIsPlaying(false);
-          setIsComplete(true);
-        }
+        setIsPlaying(false);
+        setIsComplete(true);
       };
       
-      // Start from paused position
+      // Start playback and immediately set start time reference
       startTimeRef.current = audioContextRef.current.currentTime;
       source.start(0, pausedAtRef.current);
       sourceNodeRef.current = source;
