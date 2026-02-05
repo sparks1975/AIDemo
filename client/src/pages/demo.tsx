@@ -101,20 +101,14 @@ export default function DemoPage() {
     setDebugLog(prev => [...prev.slice(-10), `${timestamp}: ${msg}`]);
   };
 
-  // Audio output latency compensation - UI appears this many seconds AFTER audio time
-  // This accounts for the delay between browser playing audio and sound reaching speakers
-  const LATENCY_OFFSET = 1.5;
+  // Only show content when audio time is actually advancing (not stuck at 0)
+  // This detects when audio is truly playing, not just when the browser says it is
+  const showContent = audioActuallyPlaying && currentTime > 0.1;
   
-  // Adjusted time for UI display (audio time minus latency = what user is actually hearing)
-  const displayTime = Math.max(0, currentTime - LATENCY_OFFSET);
-  
-  // Only show content when audio is ACTUALLY playing AND after latency offset
-  const showContent = audioActuallyPlaying && currentTime >= LATENCY_OFFSET;
-  
-  const currentBadges = showContent ? getBadgesAtTime(displayTime) : [];
+  const currentBadges = showContent ? getBadgesAtTime(currentTime) : [];
   
   const currentMessage = showContent 
-    ? demoConversation.filter(m => m.timestamp <= displayTime).pop()
+    ? demoConversation.filter(m => m.timestamp <= currentTime).pop()
     : null;
 
   // Set up audio element
@@ -131,14 +125,33 @@ export default function DemoPage() {
 
     // THIS IS THE KEY: only show UI when audio is ACTUALLY playing
     const handlePlaying = () => {
-      addDebug(`playing event! currentTime=${audio.currentTime.toFixed(2)}`);
+      addDebug(`playing! time=${audio.currentTime.toFixed(2)} readyState=${audio.readyState} networkState=${audio.networkState}`);
       setIsStarting(false);
       setAudioActuallyPlaying(true);
     };
+    
+    // Additional events to track buffering issues
+    const handleWaiting = () => {
+      addDebug('WAITING - audio is buffering!');
+    };
+    
+    const handleStalled = () => {
+      addDebug('STALLED - download stalled!');
+    };
+    
+    audio.addEventListener('waiting', handleWaiting);
+    audio.addEventListener('stalled', handleStalled);
 
     // Update time from the actual audio element
+    let lastLoggedTime = -1;
     const handleTimeUpdate = () => {
-      setCurrentTime(audio.currentTime);
+      const t = audio.currentTime;
+      // Log first time we see time > 0
+      if (lastLoggedTime < 0.1 && t >= 0.1) {
+        addDebug(`timeupdate: first real time = ${t.toFixed(2)}`);
+      }
+      lastLoggedTime = t;
+      setCurrentTime(t);
     };
 
     const handleEnded = () => {
@@ -170,6 +183,8 @@ export default function DemoPage() {
       audio.removeEventListener('timeupdate', handleTimeUpdate);
       audio.removeEventListener('ended', handleEnded);
       audio.removeEventListener('pause', handlePause);
+      audio.removeEventListener('waiting', handleWaiting);
+      audio.removeEventListener('stalled', handleStalled);
       audio.pause();
     };
   }, []);
