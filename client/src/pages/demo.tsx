@@ -87,15 +87,21 @@ export default function DemoPage() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
-  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const [isAudioReady, setIsAudioReady] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const audioBlobUrl = useRef<string | null>(null);
+  
+  // Web Audio API refs
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const audioBufferRef = useRef<AudioBuffer | null>(null);
+  const sourceNodeRef = useRef<AudioBufferSourceNode | null>(null);
+  const gainNodeRef = useRef<GainNode | null>(null);
+  const startTimeRef = useRef<number>(0);
+  const pausedAtRef = useRef<number>(0);
+  const animationFrameRef = useRef<number>(0);
 
-  // Only show content when audio time is actually advancing (not 0)
-  const audioHasStarted = isAudioPlaying && currentTime > 0.1;
+  // Only show content when audio is playing and time > 0
+  const audioHasStarted = isPlaying && currentTime > 0;
   
   const currentBadges = audioHasStarted ? getBadgesAtTime(currentTime) : [];
   
@@ -103,12 +109,22 @@ export default function DemoPage() {
     ? demoConversation.filter(m => m.timestamp <= currentTime).pop()
     : null;
 
-  // Fetch entire audio file as blob before enabling play
+  // Load and decode audio on mount
   useEffect(() => {
     const controller = new AbortController();
     
-    async function loadAudio() {
+    async function loadAndDecodeAudio() {
       try {
+        // Create audio context
+        const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+        audioContextRef.current = audioContext;
+        
+        // Create gain node for mute control
+        const gainNode = audioContext.createGain();
+        gainNode.connect(audioContext.destination);
+        gainNodeRef.current = gainNode;
+        
+        // Fetch audio file
         const response = await fetch('/audio/demo-call.mp3', {
           signal: controller.signal
         });
@@ -130,42 +146,28 @@ export default function DemoPage() {
             receivedLength += value.length;
             
             if (contentLength > 0) {
-              setLoadingProgress(Math.round((receivedLength / contentLength) * 100));
+              setLoadingProgress(Math.round((receivedLength / contentLength) * 80)); // 80% for download
             }
           }
         }
         
-        // Create blob from chunks
-        const blob = new Blob(chunks, { type: 'audio/mpeg' });
-        const blobUrl = URL.createObjectURL(blob);
-        audioBlobUrl.current = blobUrl;
+        // Combine chunks into array buffer
+        const totalLength = chunks.reduce((acc, chunk) => acc + chunk.length, 0);
+        const audioData = new Uint8Array(totalLength);
+        let position = 0;
+        for (const chunk of chunks) {
+          audioData.set(chunk, position);
+          position += chunk.length;
+        }
         
-        // Create audio element with blob URL
-        const audio = new Audio(blobUrl);
-        audio.preload = 'auto';
+        setLoadingProgress(85); // Start decoding
         
-        audio.addEventListener('playing', () => {
-          setIsAudioPlaying(true);
-          setIsPlaying(true);
-        });
+        // Decode audio data - this is the key step for instant playback
+        const audioBuffer = await audioContext.decodeAudioData(audioData.buffer);
+        audioBufferRef.current = audioBuffer;
         
-        audio.addEventListener('pause', () => {
-          setIsPlaying(false);
-        });
-        
-        audio.addEventListener('timeupdate', () => {
-          setCurrentTime(audio.currentTime);
-        });
-        
-        audio.addEventListener('ended', () => {
-          setIsPlaying(false);
-          setIsAudioPlaying(false);
-          setIsComplete(true);
-        });
-        
-        audioRef.current = audio;
-        setIsAudioReady(true);
         setLoadingProgress(100);
+        setIsAudioReady(true);
         
       } catch (err) {
         if ((err as Error).name !== 'AbortError') {
@@ -174,56 +176,129 @@ export default function DemoPage() {
       }
     }
     
-    loadAudio();
+    loadAndDecodeAudio();
     
     return () => {
       controller.abort();
-      if (audioBlobUrl.current) {
-        URL.revokeObjectURL(audioBlobUrl.current);
+      cancelAnimationFrame(animationFrameRef.current);
+      if (sourceNodeRef.current) {
+        try { sourceNodeRef.current.stop(); } catch {}
       }
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.src = '';
+      if (audioContextRef.current) {
+        audioContextRef.current.close();
       }
     };
   }, []);
 
+  // Update current time while playing
+  const updateTime = useCallback(() => {
+    if (!audioContextRef.current || !isPlaying) return;
+    
+    const elapsed = audioContextRef.current.currentTime - startTimeRef.current + pausedAtRef.current;
+    setCurrentTime(elapsed);
+    
+    if (elapsed >= demoDuration) {
+      setIsPlaying(false);
+      setIsComplete(true);
+      return;
+    }
+    
+    animationFrameRef.current = requestAnimationFrame(updateTime);
+  }, [isPlaying]);
+
+  useEffect(() => {
+    if (isPlaying) {
+      animationFrameRef.current = requestAnimationFrame(updateTime);
+    }
+    return () => cancelAnimationFrame(animationFrameRef.current);
+  }, [isPlaying, updateTime]);
+
   const handlePlay = useCallback(() => {
-    const audio = audioRef.current;
-    if (!audio || !isAudioReady) return;
+    if (!audioContextRef.current || !audioBufferRef.current || !gainNodeRef.current || !isAudioReady) return;
 
     if (isPlaying) {
-      audio.pause();
+      // Pause
+      if (sourceNodeRef.current) {
+        sourceNodeRef.current.stop();
+        sourceNodeRef.current = null;
+      }
+      pausedAtRef.current = currentTime;
+      setIsPlaying(false);
     } else {
-      audio.play();
+      // Resume audio context if suspended (browser autoplay policy)
+      if (audioContextRef.current.state === 'suspended') {
+        audioContextRef.current.resume();
+      }
+      
+      // Create new source node (required for each play)
+      const source = audioContextRef.current.createBufferSource();
+      source.buffer = audioBufferRef.current;
+      source.connect(gainNodeRef.current);
+      
+      source.onended = () => {
+        if (isPlaying) {
+          setIsPlaying(false);
+          setIsComplete(true);
+        }
+      };
+      
+      // Start from paused position
+      startTimeRef.current = audioContextRef.current.currentTime;
+      source.start(0, pausedAtRef.current);
+      sourceNodeRef.current = source;
+      
+      setIsPlaying(true);
     }
-  }, [isPlaying, isAudioReady]);
+  }, [isPlaying, isAudioReady, currentTime]);
 
   const handleSkip = useCallback(() => {
-    const audio = audioRef.current;
-    if (audio) {
-      audio.pause();
+    if (sourceNodeRef.current) {
+      try { sourceNodeRef.current.stop(); } catch {}
+      sourceNodeRef.current = null;
     }
     setIsPlaying(false);
-    setIsAudioPlaying(false);
     setCurrentTime(demoDuration);
     setIsComplete(true);
   }, []);
 
   const handleReplay = useCallback(() => {
-    const audio = audioRef.current;
-    if (audio) {
-      audio.currentTime = 0;
-      audio.play();
+    if (!audioContextRef.current || !audioBufferRef.current || !gainNodeRef.current) return;
+    
+    // Stop current if playing
+    if (sourceNodeRef.current) {
+      try { sourceNodeRef.current.stop(); } catch {}
     }
+    
+    // Reset
+    pausedAtRef.current = 0;
     setCurrentTime(0);
     setIsComplete(false);
+    
+    // Resume context if needed
+    if (audioContextRef.current.state === 'suspended') {
+      audioContextRef.current.resume();
+    }
+    
+    // Create new source
+    const source = audioContextRef.current.createBufferSource();
+    source.buffer = audioBufferRef.current;
+    source.connect(gainNodeRef.current);
+    
+    source.onended = () => {
+      setIsPlaying(false);
+      setIsComplete(true);
+    };
+    
+    startTimeRef.current = audioContextRef.current.currentTime;
+    source.start(0, 0);
+    sourceNodeRef.current = source;
+    
+    setIsPlaying(true);
   }, []);
 
   const toggleMute = useCallback(() => {
-    const audio = audioRef.current;
-    if (audio) {
-      audio.muted = !isMuted;
+    if (gainNodeRef.current) {
+      gainNodeRef.current.gain.value = isMuted ? 1 : 0;
       setIsMuted(!isMuted);
     }
   }, [isMuted]);
