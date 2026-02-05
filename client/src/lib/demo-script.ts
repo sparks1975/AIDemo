@@ -68,7 +68,7 @@ export const badgeUpdates: BadgeUpdate[] = [
   // After caller picks 9:30
   { badgeId: 'appointment', icon: 'calendar', label: 'Appointment', value: 'Thu, Oct 9 @ 9:30 AM', timestamp: 71.772, color: 'info' },
   // After AI confirms booking
-  { badgeId: 'appointment', icon: 'calendar-check', label: 'Appointment', value: 'Booked: Thu, Oct 9 @ 9:30 AM', timestamp: 74.932, color: 'success' },
+  { badgeId: 'appointment', icon: 'calendar-check', label: 'Appointment', value: 'Booked: Thu, Oct 9 @ 9:30 AM', timestamp: 86.331, color: 'success' },
   
   // Call complete
   { badgeId: 'call', icon: 'check-circle', label: 'Call Status', value: 'Complete', timestamp: 97, color: 'success' },
