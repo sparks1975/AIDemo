@@ -53,20 +53,24 @@ function BadgeComponent({ badge }: { badge: Badge }) {
   
   const colorStyles = {
     default: {
-      iconBg: 'rgba(142, 142, 147, 0.12)',
+      iconBg: 'linear-gradient(135deg, rgba(142,142,147,0.15) 0%, rgba(142,142,147,0.08) 100%)',
       iconColor: '#8E8E93',
+      accentBorder: 'rgba(142,142,147,0.12)',
     },
     success: {
-      iconBg: 'rgba(52, 199, 89, 0.12)',
-      iconColor: '#34C759',
+      iconBg: 'linear-gradient(135deg, rgba(52,199,89,0.18) 0%, rgba(52,199,89,0.08) 100%)',
+      iconColor: '#30D158',
+      accentBorder: 'rgba(52,199,89,0.15)',
     },
     warning: {
-      iconBg: 'rgba(255, 149, 0, 0.12)',
-      iconColor: '#FF9500',
+      iconBg: 'linear-gradient(135deg, rgba(255,149,0,0.18) 0%, rgba(255,149,0,0.08) 100%)',
+      iconColor: '#FF9F0A',
+      accentBorder: 'rgba(255,149,0,0.15)',
     },
     info: {
-      iconBg: 'rgba(1, 122, 255, 0.12)',
-      iconColor: '#017AFF',
+      iconBg: 'linear-gradient(135deg, rgba(1,122,255,0.18) 0%, rgba(1,122,255,0.08) 100%)',
+      iconColor: '#0A84FF',
+      accentBorder: 'rgba(1,122,255,0.15)',
     },
   };
 
@@ -75,33 +79,47 @@ function BadgeComponent({ badge }: { badge: Badge }) {
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, y: 8, scale: 0.98 }}
+      initial={{ opacity: 0, y: 10, scale: 0.96 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ type: 'spring', damping: 28, stiffness: 380 }}
-      className="flex items-center gap-3.5 px-4 py-3 rounded-2xl w-[345px]"
+      transition={{ type: 'spring', damping: 26, stiffness: 340 }}
+      className="flex items-center gap-3.5 px-4.5 py-3.5 rounded-[18px] w-[345px]"
       style={{
         fontFamily: '-apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif',
-        background: 'rgba(255, 255, 255, 0.72)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        boxShadow: '0 0.5px 0 0 rgba(0,0,0,0.04), 0 1px 3px 0 rgba(0,0,0,0.06)',
+        background: 'linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.65) 100%)',
+        backdropFilter: 'blur(40px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(40px) saturate(180%)',
+        boxShadow: `
+          0 0 0 0.5px rgba(255,255,255,0.6),
+          0 0 0 1px ${colors.accentBorder},
+          0 1px 1px rgba(0,0,0,0.02),
+          0 2px 4px rgba(0,0,0,0.03),
+          0 4px 12px rgba(0,0,0,0.05)
+        `,
       }}
       data-testid={`badge-${badge.id}`}
     >
       <div 
-        className="flex-shrink-0 w-10 h-10 rounded-[10px] flex items-center justify-center"
-        style={{ backgroundColor: colors.iconBg }}
+        className="flex-shrink-0 w-10 h-10 rounded-[11px] flex items-center justify-center"
+        style={{ 
+          background: colors.iconBg,
+          boxShadow: `inset 0 0.5px 0.5px rgba(255,255,255,0.5), 0 0.5px 1.5px rgba(0,0,0,0.04)`,
+        }}
       >
         <Icon className="w-5 h-5" style={{ color: colors.iconColor }} />
       </div>
-      <div className="flex flex-col min-w-0 flex-1 gap-0.5">
-        <span className="text-[13px] font-medium leading-tight" style={{ color: '#86868B' }}>{badge.label}</span>
+      <div className="flex flex-col min-w-0 flex-1 gap-[3px]">
+        <span 
+          className="text-[12px] font-semibold uppercase tracking-wider leading-tight" 
+          style={{ color: '#98989F', letterSpacing: '0.06em' }}
+        >
+          {badge.label}
+        </span>
         <motion.span 
           key={badge.value}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.2 }}
-          className="text-[15px] font-semibold leading-tight truncate" 
+          className="text-[15px] font-semibold leading-snug truncate" 
           style={{ color: '#1D1D1F' }}
         >
           {badge.value}
