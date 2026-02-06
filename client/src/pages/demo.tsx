@@ -296,112 +296,117 @@ export default function DemoPage() {
       </div>
 
       {/* Main content */}
-      <main className="flex-1 flex flex-col items-center justify-center relative z-10 px-4 pb-8">
+      <main className="flex-1 flex flex-col relative z-10 px-4 pb-8">
         
-        {/* Title - show when not showing content */}
-        {!showContent && !isComplete && !showStartingState && (
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex flex-col items-center text-center mb-8"
-          >
-            <div className="relative mb-6">
-              <div 
-                className="w-20 h-20 rounded-full flex items-center justify-center shadow-lg"
-                style={{ backgroundColor: ALOHA_BLUE }}
-              >
-                <Phone className="w-10 h-10 text-white" />
+        {/* Center zone — badges sit vertically centered */}
+        <div className="flex-1 flex flex-col items-center justify-center">
+          {/* Title - show when not showing content */}
+          {!showContent && !isComplete && !showStartingState && (
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex flex-col items-center text-center"
+            >
+              <div className="relative mb-6">
+                <div 
+                  className="w-20 h-20 rounded-full flex items-center justify-center shadow-lg"
+                  style={{ backgroundColor: ALOHA_BLUE }}
+                >
+                  <Phone className="w-10 h-10 text-white" />
+                </div>
               </div>
-            </div>
-            
-            <h1 className="text-2xl md:text-3xl font-extrabold text-black mb-2" style={{ lineHeight: 1.2 }}>
-              Hear Charlie in Action
-            </h1>
-            <p className="text-[#4D4D4D] text-sm">
-              {isLoading ? 'Loading audio...' : 'Press play to hear an actual AI call'}
-            </p>
-          </motion.div>
-        )}
-
-        {/* Starting state - like Arini */}
-        {showStartingState && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="flex flex-col items-center text-center mb-8"
-          >
-            <div className="relative mb-6">
-              <div 
-                className="w-20 h-20 rounded-full flex items-center justify-center shadow-lg"
-                style={{ backgroundColor: ALOHA_BLUE }}
-              >
-                <Loader2 className="w-10 h-10 text-white animate-spin" />
-              </div>
-            </div>
-            
-            <h1 className="text-2xl md:text-3xl font-extrabold text-black mb-2" style={{ lineHeight: 1.2 }}>
-              Starting demo...
-            </h1>
-            <p className="text-[#4D4D4D] text-sm">
-              For the full experience, ensure your volume is on.
-            </p>
-          </motion.div>
-        )}
-        
-        {/* Badges */}
-        {showContent && !isComplete && (
-          <div className="flex flex-col items-center gap-2 mb-8 px-4">
-            <AnimatePresence>
-              {currentBadges.map(badge => (
-                <BadgeComponent key={badge.id} badge={badge} />
-              ))}
-            </AnimatePresence>
-          </div>
-        )}
-        
-        {/* Transcript - only after latency offset */}
-        {showContent && !isComplete && (
-          <div className="w-full px-4 mb-6 min-h-[80px] flex items-center justify-center">
-            {currentMessage && (
-              <p
-                key={currentMessage.id}
-                className="text-base md:text-lg text-black text-center leading-relaxed max-w-2xl"
-                style={{ lineHeight: 1.5 }}
-              >
-                {currentMessage.text}
+              
+              <h1 className="text-2xl md:text-3xl font-extrabold text-black mb-2" style={{ lineHeight: 1.2 }}>
+                Hear Charlie in Action
+              </h1>
+              <p className="text-[#4D4D4D] text-sm">
+                {isLoading ? 'Loading audio...' : 'Press play to hear an actual AI call'}
               </p>
-            )}
-          </div>
-        )}
+            </motion.div>
+          )}
 
-        {/* Complete state */}
-        {isComplete && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="flex flex-col items-center text-center mb-8"
-          >
-            <div className="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center mb-4 border border-emerald-200">
-              <CheckCircle className="w-8 h-8 text-emerald-500" />
+          {/* Starting state */}
+          {showStartingState && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex flex-col items-center text-center"
+            >
+              <div className="relative mb-6">
+                <div 
+                  className="w-20 h-20 rounded-full flex items-center justify-center shadow-lg"
+                  style={{ backgroundColor: ALOHA_BLUE }}
+                >
+                  <Loader2 className="w-10 h-10 text-white animate-spin" />
+                </div>
+              </div>
+              
+              <h1 className="text-2xl md:text-3xl font-extrabold text-black mb-2" style={{ lineHeight: 1.2 }}>
+                Starting demo...
+              </h1>
+              <p className="text-[#4D4D4D] text-sm">
+                For the full experience, ensure your volume is on.
+              </p>
+            </motion.div>
+          )}
+          
+          {/* Badges — vertically centered */}
+          {showContent && !isComplete && (
+            <div className="flex flex-col items-center gap-2 px-4">
+              <AnimatePresence>
+                {currentBadges.map(badge => (
+                  <BadgeComponent key={badge.id} badge={badge} />
+                ))}
+              </AnimatePresence>
             </div>
-            <h2 className="text-xl md:text-2xl font-extrabold text-black mb-2" style={{ lineHeight: 1.2 }}>
-              Sound effective?
-            </h2>
-            <p className="text-[#4D4D4D] text-sm">
-              Want to see behind the curtain?
-            </p>
-          </motion.div>
-        )}
+          )}
 
-        {/* Debug time display */}
-        {showContent && (
-          <div className="mb-2 text-xs font-mono text-gray-400" data-testid="text-debug-time">
-            {currentTime.toFixed(2)}s | Line {currentMessage?.id || '-'}: {currentMessage?.speaker || '-'}
-          </div>
-        )}
+          {/* Complete state */}
+          {isComplete && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="flex flex-col items-center text-center"
+            >
+              <div className="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center mb-4 border border-emerald-200">
+                <CheckCircle className="w-8 h-8 text-emerald-500" />
+              </div>
+              <h2 className="text-xl md:text-2xl font-extrabold text-black mb-2" style={{ lineHeight: 1.2 }}>
+                Sound effective?
+              </h2>
+              <p className="text-[#4D4D4D] text-sm">
+                Want to see behind the curtain?
+              </p>
+            </motion.div>
+          )}
+        </div>
 
-        {/* Controls */}
-        <div className="flex items-center gap-4">
+        {/* Bottom zone — transcript and controls pinned near bottom */}
+        <div className="flex flex-col items-center">
+          {/* Transcript */}
+          {showContent && !isComplete && (
+            <div className="w-full px-4 mb-6 min-h-[80px] flex items-center justify-center">
+              {currentMessage && (
+                <p
+                  key={currentMessage.id}
+                  className="text-base md:text-lg text-black text-center leading-relaxed max-w-2xl"
+                  style={{ lineHeight: 1.5 }}
+                >
+                  {currentMessage.text}
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* Debug time display */}
+          {showContent && (
+            <div className="mb-2 text-xs font-mono text-gray-400" data-testid="text-debug-time">
+              {currentTime.toFixed(2)}s | Line {currentMessage?.id || '-'}: {currentMessage?.speaker || '-'}
+            </div>
+          )}
+
+          {/* Controls */}
+          <div className="flex items-center gap-4">
           {isComplete ? (
             <Button
               onClick={handleReplay}
@@ -447,6 +452,7 @@ export default function DemoPage() {
               )}
             </>
           )}
+          </div>
         </div>
       </main>
     </div>
