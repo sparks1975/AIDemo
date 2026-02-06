@@ -78,7 +78,7 @@ function BadgeComponent({ badge }: { badge: Badge }) {
       initial={{ opacity: 0, y: 8, scale: 0.98 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ type: 'spring', damping: 28, stiffness: 380 }}
-      className="flex items-center gap-3 px-3.5 py-2.5 rounded-2xl w-72"
+      className="flex items-center gap-3.5 px-4 py-3 rounded-2xl w-[345px]"
       style={{
         background: 'rgba(255, 255, 255, 0.72)',
         backdropFilter: 'blur(20px)',
@@ -88,19 +88,19 @@ function BadgeComponent({ badge }: { badge: Badge }) {
       data-testid={`badge-${badge.id}`}
     >
       <div 
-        className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center"
+        className="flex-shrink-0 w-10 h-10 rounded-[10px] flex items-center justify-center"
         style={{ backgroundColor: colors.iconBg }}
       >
-        <Icon className="w-4 h-4" style={{ color: colors.iconColor }} />
+        <Icon className="w-5 h-5" style={{ color: colors.iconColor }} />
       </div>
       <div className="flex flex-col min-w-0 flex-1 gap-0.5">
-        <span className="text-[11px] font-medium leading-tight" style={{ color: '#86868B' }}>{badge.label}</span>
+        <span className="text-[13px] font-medium leading-tight" style={{ color: '#86868B' }}>{badge.label}</span>
         <motion.span 
           key={badge.value}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.2 }}
-          className="text-[13px] font-semibold leading-tight truncate" 
+          className="text-[15px] font-semibold leading-tight truncate" 
           style={{ color: '#1D1D1F' }}
         >
           {badge.value}
