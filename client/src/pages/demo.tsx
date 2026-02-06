@@ -535,34 +535,35 @@ export default function DemoPage() {
             null
           ) : (
             <>
-              <Button 
-                size="lg" 
-                onClick={handlePlay}
-                disabled={isLoading || showStartingState}
-                className={cn(
-                  "w-14 h-14 rounded-full shadow-lg border-0 text-white transition-all",
-                  (isLoading || showStartingState) && "opacity-50 cursor-not-allowed"
-                )}
-                style={{ backgroundColor: ALOHA_BLUE }}
-                data-testid="button-play-pause"
-              >
-                {isLoading || showStartingState ? (
-                  <Loader2 className="w-6 h-6 animate-spin" />
-                ) : isPlaying ? (
-                  <Pause className="w-6 h-6" />
-                ) : (
-                  <Play className="w-6 h-6 ml-0.5" />
-                )}
-              </Button>
-              {showContent && (
+              {hasStartedOnce && (isPlaying || showContent) ? (
                 <Button 
-                  variant="ghost" 
+                  size="lg" 
                   onClick={handleSkip}
-                  className="text-[#4D4D4D] hover:text-black hover:bg-white/80 rounded-full px-6"
+                  className="rounded-full px-8 shadow-lg border-0 text-white transition-all gap-2"
+                  style={{ backgroundColor: ALOHA_BLUE }}
                   data-testid="button-skip"
                 >
-                  <SkipForward className="w-4 h-4 mr-2" />
-                  Skip
+                  <SkipForward className="w-5 h-5" />
+                  Skip Demo
+                </Button>
+              ) : (
+                <Button 
+                  size="lg" 
+                  onClick={handlePlay}
+                  disabled={isLoading || showStartingState}
+                  className={cn(
+                    "rounded-full px-8 shadow-lg border-0 text-white transition-all gap-2",
+                    (isLoading || showStartingState) && "opacity-50 cursor-not-allowed"
+                  )}
+                  style={{ backgroundColor: ALOHA_BLUE }}
+                  data-testid="button-play-pause"
+                >
+                  {isLoading || showStartingState ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <Play className="w-5 h-5" />
+                  )}
+                  Play Demo
                 </Button>
               )}
             </>
