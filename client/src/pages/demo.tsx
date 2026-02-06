@@ -440,19 +440,50 @@ export default function DemoPage() {
           {/* Complete state */}
           {isComplete && (
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="flex flex-col items-center text-center"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex flex-col items-center text-center max-w-lg px-4"
             >
-              <div className="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center mb-4 border border-emerald-200">
-                <CheckCircle className="w-8 h-8 text-emerald-500" />
-              </div>
-              <h2 className="text-xl md:text-2xl font-extrabold text-black mb-2" style={{ lineHeight: 1.2 }}>
-                Sound effective?
-              </h2>
-              <p className="text-[#4D4D4D] text-sm">
-                Want to see behind the curtain?
-              </p>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.7, ease: 'easeOut' }}
+                className="text-3xl md:text-4xl font-semibold leading-snug"
+                style={{ 
+                  fontFamily: '-apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif',
+                  color: '#1D1D1F',
+                }}
+              >
+                Ready to get started?
+                <br />
+                <span style={{ color: '#86868B' }}>Book a demo today.</span>
+              </motion.p>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.2, duration: 0.7, ease: 'easeOut' }}
+                className="mt-8"
+              >
+                <Button
+                  size="lg"
+                  className="rounded-full px-8 text-white border-0 text-base"
+                  style={{ backgroundColor: ALOHA_BLUE }}
+                  onClick={() => window.open('https://aloha.com/demo', '_blank')}
+                  data-testid="button-book-demo"
+                >
+                  Book a Demo
+                </Button>
+                <button
+                  onClick={handleReplay}
+                  className="mt-4 text-sm font-medium flex items-center gap-1.5 mx-auto"
+                  style={{ color: '#86868B' }}
+                  data-testid="button-replay"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  Replay Demo
+                </button>
+              </motion.div>
             </motion.div>
           )}
         </div>
@@ -482,18 +513,9 @@ export default function DemoPage() {
           )}
 
           {/* Controls */}
-          <div className="flex items-center gap-4" style={{ visibility: showIntro ? 'hidden' : 'visible' }}>
+          <div className="flex items-center gap-4" style={{ visibility: (showIntro || isComplete) ? 'hidden' : 'visible' }}>
           {isComplete ? (
-            <Button
-              onClick={handleReplay}
-              size="lg"
-              className="rounded-full px-6 text-white border-0"
-              style={{ backgroundColor: ALOHA_BLUE }}
-              data-testid="button-replay"
-            >
-              <RotateCcw className="w-4 h-4 mr-2" />
-              Replay Demo
-            </Button>
+            null
           ) : (
             <>
               <Button 
