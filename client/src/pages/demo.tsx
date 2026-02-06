@@ -371,27 +371,10 @@ export default function DemoPage() {
               exit={{ opacity: 0 }}
               className="flex flex-col items-center text-center max-w-lg px-4"
             >
-              <motion.div
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 0.1, duration: 0.5, type: 'spring', damping: 15 }}
-                className="mb-6"
-              >
-                <div 
-                  className="w-14 h-14 rounded-full flex items-center justify-center"
-                  style={{ 
-                    background: `linear-gradient(135deg, ${ALOHA_BLUE}, #34C759)`,
-                    boxShadow: `0 4px 20px rgba(1,122,255,0.3)`,
-                  }}
-                >
-                  <Phone className="w-7 h-7 text-white" />
-                </div>
-              </motion.div>
-
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4, duration: 0.7, ease: 'easeOut' }}
+                transition={{ delay: 0.2, duration: 0.7, ease: 'easeOut' }}
                 className="text-3xl md:text-4xl font-semibold leading-snug"
                 style={{ 
                   fontFamily: '-apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif',
@@ -406,13 +389,10 @@ export default function DemoPage() {
               <motion.p
                 initial={{ opacity: 0, y: 20, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ delay: 1.4, duration: 0.7, ease: 'easeOut' }}
+                transition={{ delay: 1.2, duration: 0.7, ease: 'easeOut' }}
                 className="text-3xl md:text-4xl font-extrabold mt-5 leading-snug"
                 style={{ 
-                  background: `linear-gradient(135deg, ${ALOHA_BLUE}, #34C759)`,
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
+                  color: ALOHA_BLUE,
                   fontFamily: '-apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif',
                 }}
               >
