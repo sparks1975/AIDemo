@@ -365,7 +365,7 @@ export default function DemoPage() {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.1, duration: 0.5, ease: 'easeOut' }}
-                className="w-26 h-26 md:w-32 md:h-32 mb-2"
+                className="w-26 h-26 md:w-32 md:h-32 mb-3"
               />
               <motion.h1 
                 initial={{ opacity: 0, y: 15 }}
