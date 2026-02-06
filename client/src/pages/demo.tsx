@@ -356,23 +356,43 @@ export default function DemoPage() {
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex flex-col items-center text-center"
+              className="flex flex-col items-center text-center px-6 max-w-lg"
             >
-              <div className="relative mb-6">
-                <div 
-                  className="w-20 h-20 rounded-full flex items-center justify-center shadow-lg"
-                  style={{ backgroundColor: ALOHA_BLUE }}
+              <motion.h1 
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15, duration: 0.6, ease: 'easeOut' }}
+                className="text-3xl md:text-4xl font-extrabold mb-4"
+                style={{ 
+                  lineHeight: 1.15,
+                  background: 'linear-gradient(135deg, #1D1D1F 0%, #3A3A3C 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  letterSpacing: '-0.02em',
+                }}
+              >
+                Welcome to CharlieAI
+              </motion.h1>
+              <motion.p 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.6, ease: 'easeOut' }}
+                className="text-base md:text-lg leading-relaxed max-w-md"
+                style={{ color: '#6E6E73' }}
+              >
+                Streamline scheduling, handle patient calls after-hours, and free up your staff to focus on what truly matters—patient care.
+              </motion.p>
+              {isLoading && (
+                <motion.p 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.6 }}
+                  className="mt-4 text-sm"
+                  style={{ color: '#86868B' }}
                 >
-                  <Phone className="w-10 h-10 text-white" />
-                </div>
-              </div>
-              
-              <h1 className="text-2xl md:text-3xl font-extrabold text-black mb-2" style={{ lineHeight: 1.2 }}>
-                Hear Charlie in Action
-              </h1>
-              <p className="text-[#4D4D4D] text-sm">
-                {isLoading ? 'Loading audio...' : 'Press play to hear an actual AI call'}
-              </p>
+                  Loading audio...
+                </motion.p>
+              )}
             </motion.div>
           )}
 
