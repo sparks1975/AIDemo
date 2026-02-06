@@ -480,8 +480,12 @@ export default function DemoPage() {
               >
                 <Button
                   size="lg"
-                  className="rounded-full px-8 text-white border-0 text-base"
-                  style={{ backgroundColor: ALOHA_BLUE }}
+                  className="rounded-xl px-12 py-6 text-white border-0 text-lg font-semibold no-default-hover-elevate no-default-active-elevate"
+                  style={{
+                    background: 'linear-gradient(135deg, #5AB0FF 0%, #3A8EF6 40%, #2D7BE5 100%)',
+                    boxShadow: '0 4px 15px rgba(42, 123, 229, 0.35), 0 1px 3px rgba(0, 0, 0, 0.1)',
+                    minWidth: '260px',
+                  }}
                   onClick={() => window.open('https://aloha.com/demo', '_blank')}
                   data-testid="button-book-demo"
                 >
