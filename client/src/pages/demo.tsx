@@ -256,13 +256,13 @@ export default function DemoPage() {
             key={i}
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
             style={{
-              width: `${250 + i * 180}px`,
-              height: `${250 + i * 180}px`,
-              background: 'rgba(255, 255, 255, 0.35)',
-              boxShadow: `inset 0 1px 2px 0 rgba(255,255,255,0.5), inset 0 -1px 2px 0 rgba(0,0,0,0.03), 0 1px 3px 0 rgba(0,0,0,0.04)`,
-              border: '1px solid rgba(255, 255, 255, 0.5)',
-              backdropFilter: 'blur(2px)',
-              WebkitBackdropFilter: 'blur(2px)',
+              width: `${150 + i * 120}px`,
+              height: `${150 + i * 120}px`,
+              background: 'rgba(255, 255, 255, 0.45)',
+              boxShadow: `inset 0 1px 3px 0 rgba(255,255,255,0.6), inset 0 -1px 3px 0 rgba(0,0,0,0.05), 0 1px 4px 0 rgba(0,0,0,0.06)`,
+              border: '1px solid rgba(255, 255, 255, 0.6)',
+              backdropFilter: 'blur(3px)',
+              WebkitBackdropFilter: 'blur(3px)',
               animation: `ripple-pulse ${9 + i * 2.5}s ease-in-out infinite`,
               animationDelay: `${i * 1.8}s`,
             }}
