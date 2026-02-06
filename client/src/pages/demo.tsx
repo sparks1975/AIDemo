@@ -83,7 +83,7 @@ function BadgeComponent({ badge }: { badge: Badge }) {
       initial={{ opacity: 0, y: 10, scale: 0.96 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ type: 'spring', damping: 26, stiffness: 340 }}
-      className="flex items-center gap-3.5 px-[18px] py-3.5 rounded-[18px] w-full max-w-[345px]"
+      className="flex items-center gap-3.5 px-[18px] py-3.5 rounded-[18px] min-w-[345px]"
       style={{
         fontFamily: '-apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif',
         background: 'linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.65) 100%)',
@@ -365,8 +365,8 @@ export default function DemoPage() {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.1, duration: 0.5, ease: 'easeOut' }}
-                className="w-26 h-26 md:w-32 md:h-32 mb-1"
-                style={{ maxWidth: '80px' }}
+                className="mb-1"
+                style={{ width: '80px', height: '80px' }}
               />
               <motion.h1 
                 initial={{ opacity: 0, y: 15 }}
