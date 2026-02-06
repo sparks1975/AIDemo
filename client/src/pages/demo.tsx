@@ -393,6 +393,13 @@ export default function DemoPage() {
           </motion.div>
         )}
 
+        {/* Debug time display */}
+        {showContent && (
+          <div className="mb-2 text-xs font-mono text-gray-400" data-testid="text-debug-time">
+            {currentTime.toFixed(2)}s | Line {currentMessage?.id || '-'}: {currentMessage?.speaker || '-'}
+          </div>
+        )}
+
         {/* Controls */}
         <div className="flex items-center gap-4">
           {isComplete ? (
