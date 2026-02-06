@@ -82,7 +82,7 @@ function BadgeComponent({ badge }: { badge: Badge }) {
       initial={{ opacity: 0, y: 10, scale: 0.96 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ type: 'spring', damping: 26, stiffness: 340 }}
-      className="flex items-center gap-3.5 px-4.5 py-3.5 rounded-[18px] w-[345px]"
+      className="flex items-center gap-3.5 px-[18px] py-3.5 rounded-[18px] w-[345px]"
       style={{
         fontFamily: '-apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif',
         background: 'linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.65) 100%)',
@@ -365,7 +365,7 @@ export default function DemoPage() {
           
           {/* Badges — vertically centered */}
           {showContent && !isComplete && (
-            <div className="flex flex-col items-center gap-2 px-4">
+            <div className="flex flex-col items-center gap-2.5 px-4">
               <AnimatePresence>
                 {currentBadges.map(badge => (
                   <BadgeComponent key={badge.id} badge={badge} />
