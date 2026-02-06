@@ -249,30 +249,27 @@ export default function DemoPage() {
 
   return (
     <div className="min-h-screen bg-[#F5F5F5] flex flex-col relative overflow-hidden">
-      {/* Subtle animated gradient background */}
+      {/* Subtle AI sound wave ripple background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div 
-          className="absolute top-0 -left-1/4 w-[600px] h-[600px] rounded-full blur-3xl opacity-30 animate-pulse"
-          style={{ 
-            background: 'radial-gradient(circle, rgba(1,122,255,0.3) 0%, transparent 70%)',
-            animationDuration: '25s'
-          }} 
-        />
-        <div 
-          className="absolute bottom-0 -right-1/4 w-[500px] h-[500px] rounded-full blur-3xl opacity-25 animate-pulse"
-          style={{ 
-            background: 'radial-gradient(circle, rgba(1,122,255,0.25) 0%, transparent 70%)',
-            animationDuration: '30s',
-            animationDelay: '5s'
-          }} 
-        />
-        <div 
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full blur-3xl opacity-15 animate-pulse"
-          style={{ 
-            background: 'radial-gradient(circle, rgba(1,122,255,0.2) 0%, transparent 60%)',
-            animationDuration: '35s',
-            animationDelay: '10s'
-          }} 
+        {[...Array(4)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
+            style={{
+              width: `${300 + i * 200}px`,
+              height: `${300 + i * 200}px`,
+              border: '1px solid rgba(1, 122, 255, 0.06)',
+              animation: `ripple-pulse ${8 + i * 3}s ease-in-out infinite`,
+              animationDelay: `${i * 2}s`,
+            }}
+          />
+        ))}
+        <div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full blur-3xl"
+          style={{
+            background: 'radial-gradient(circle, rgba(1,122,255,0.07) 0%, transparent 70%)',
+            animation: 'glow-breathe 10s ease-in-out infinite',
+          }}
         />
       </div>
 
