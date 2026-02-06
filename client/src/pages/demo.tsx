@@ -109,7 +109,7 @@ function BadgeComponent({ badge }: { badge: Badge }) {
       </div>
       <div className="flex flex-col min-w-0 flex-1 gap-[3px]">
         <span 
-          className="text-[12px] font-extrabold leading-tight" 
+          className="text-[11px] font-extrabold uppercase leading-tight" 
           style={{ color: '#AEAEB2' }}
         >
           {badge.label}
