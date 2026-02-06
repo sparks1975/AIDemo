@@ -514,7 +514,7 @@ export default function DemoPage() {
                     background: 'linear-gradient(135deg, #5AB0FF 0%, #3A8EF6 40%, #2D7BE5 100%)',
                     boxShadow: '0 4px 15px rgba(42, 123, 229, 0.35), 0 1px 3px rgba(0, 0, 0, 0.1)',
                   }}
-                  onClick={() => window.open('https://aloha.com/demo', '_blank')}
+                  onClick={() => window.open('https://getaloha.com/book-a-demo/', '_blank')}
                   data-testid="button-book-demo"
                 >
                   Book a Demo
