@@ -143,6 +143,19 @@ export default function DemoPage() {
   const introTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [hasStartedOnce, setHasStartedOnce] = useState(false);
 
+  const earlyCompleteTime = 90;
+  
+  useEffect(() => {
+    if (currentTime >= earlyCompleteTime && !isComplete && isPlaying) {
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
+      setIsPlaying(false);
+      setAudioActuallyPlaying(false);
+      setIsComplete(true);
+    }
+  }, [currentTime, isComplete, isPlaying]);
+
   const showContent = hasStartedOnce && (audioActuallyPlaying || (isPlaying === false && currentTime > 0 && !isComplete));
   
   const currentBadges = showContent ? getBadgesAtTime(currentTime) : [];
