@@ -53,19 +53,19 @@ function BadgeComponent({ badge }: { badge: Badge }) {
   
   const colorStyles = {
     default: {
-      iconBg: 'linear-gradient(135deg, rgba(142,142,147,0.15) 0%, rgba(142,142,147,0.08) 100%)',
-      iconColor: '#8E8E93',
-      accentBorder: 'rgba(142,142,147,0.12)',
+      iconBg: 'linear-gradient(135deg, rgba(1,122,255,0.18) 0%, rgba(1,122,255,0.08) 100%)',
+      iconColor: '#0A84FF',
+      accentBorder: 'rgba(1,122,255,0.15)',
     },
     success: {
-      iconBg: 'linear-gradient(135deg, rgba(52,199,89,0.18) 0%, rgba(52,199,89,0.08) 100%)',
-      iconColor: '#30D158',
-      accentBorder: 'rgba(52,199,89,0.15)',
+      iconBg: 'linear-gradient(135deg, rgba(1,122,255,0.18) 0%, rgba(1,122,255,0.08) 100%)',
+      iconColor: '#0A84FF',
+      accentBorder: 'rgba(1,122,255,0.15)',
     },
     warning: {
-      iconBg: 'linear-gradient(135deg, rgba(255,149,0,0.18) 0%, rgba(255,149,0,0.08) 100%)',
-      iconColor: '#FF9F0A',
-      accentBorder: 'rgba(255,149,0,0.15)',
+      iconBg: 'linear-gradient(135deg, rgba(1,122,255,0.18) 0%, rgba(1,122,255,0.08) 100%)',
+      iconColor: '#0A84FF',
+      accentBorder: 'rgba(1,122,255,0.15)',
     },
     info: {
       iconBg: 'linear-gradient(135deg, rgba(1,122,255,0.18) 0%, rgba(1,122,255,0.08) 100%)',
