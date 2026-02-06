@@ -476,7 +476,7 @@ export default function DemoPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1.2, duration: 0.7, ease: 'easeOut' }}
-                className="mt-8"
+                className="mt-12"
               >
                 <Button
                   size="lg"
