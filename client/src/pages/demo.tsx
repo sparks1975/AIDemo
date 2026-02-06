@@ -83,7 +83,7 @@ function BadgeComponent({ badge }: { badge: Badge }) {
       initial={{ opacity: 0, y: 10, scale: 0.96 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ type: 'spring', damping: 26, stiffness: 340 }}
-      className="flex items-center gap-3.5 px-[18px] py-3.5 rounded-[18px] w-[345px]"
+      className="flex items-center gap-3.5 px-[18px] py-3.5 rounded-[18px] w-full max-w-[345px]"
       style={{
         fontFamily: '-apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif',
         background: 'linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.65) 100%)',
@@ -372,7 +372,7 @@ export default function DemoPage() {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.6, ease: 'easeOut' }}
-                className="text-5xl md:text-6xl font-extrabold mb-4 whitespace-nowrap"
+                className="text-3xl sm:text-5xl md:text-6xl font-extrabold mb-4"
                 style={{ 
                   lineHeight: 1.15,
                   background: 'linear-gradient(135deg, #1D1D1F 0%, #3A3A3C 100%)',
@@ -387,7 +387,7 @@ export default function DemoPage() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4, duration: 0.6, ease: 'easeOut' }}
-                className="text-base md:text-lg leading-relaxed max-w-md"
+                className="text-sm sm:text-base md:text-lg leading-relaxed max-w-md"
                 style={{ color: '#6E6E73' }}
               >
                 Streamline scheduling, handle patient calls after-hours, and free up your staff to focus on what truly matters—patient care.
@@ -418,7 +418,7 @@ export default function DemoPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.7, ease: 'easeOut' }}
-                className="text-3xl md:text-4xl font-semibold leading-snug"
+                className="text-2xl sm:text-3xl md:text-4xl font-semibold leading-snug"
                 style={{ 
                   fontFamily: '-apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif',
                   color: '#1D1D1F',
@@ -433,7 +433,7 @@ export default function DemoPage() {
                 initial={{ opacity: 0, y: 20, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ delay: 1.2, duration: 0.7, ease: 'easeOut' }}
-                className="text-3xl md:text-4xl font-extrabold mt-5 leading-snug"
+                className="text-2xl sm:text-3xl md:text-4xl font-extrabold mt-5 leading-snug"
                 style={{ 
                   color: ALOHA_BLUE,
                   fontFamily: '-apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif',
@@ -491,7 +491,7 @@ export default function DemoPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.7, ease: 'easeOut' }}
-                className="text-3xl md:text-4xl font-semibold leading-snug"
+                className="text-2xl sm:text-3xl md:text-4xl font-semibold leading-snug"
                 style={{ 
                   fontFamily: '-apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif',
                   color: '#1D1D1F',
@@ -510,11 +510,10 @@ export default function DemoPage() {
               >
                 <Button
                   size="lg"
-                  className="rounded-xl px-12 py-6 text-white border-0 text-lg font-semibold no-default-hover-elevate no-default-active-elevate"
+                  className="rounded-xl px-8 sm:px-12 py-5 sm:py-6 text-base sm:text-lg text-white border-0 font-semibold no-default-hover-elevate no-default-active-elevate w-full max-w-[300px]"
                   style={{
                     background: 'linear-gradient(135deg, #5AB0FF 0%, #3A8EF6 40%, #2D7BE5 100%)',
                     boxShadow: '0 4px 15px rgba(42, 123, 229, 0.35), 0 1px 3px rgba(0, 0, 0, 0.1)',
-                    minWidth: '260px',
                   }}
                   onClick={() => window.open('https://aloha.com/demo', '_blank')}
                   data-testid="button-book-demo"
