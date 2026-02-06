@@ -31,7 +31,7 @@ export const demoConversation: ChatMessage[] = [
   { id: 6,  speaker: 'caller', text: "Yeah, you got it.", timestamp: 26.48 },
   { id: 7,  speaker: 'ai',     text: "Great. Could you please provide your date of birth?", timestamp: 27.48 },
   { id: 8,  speaker: 'caller', text: "September 22nd, 1995.", timestamp: 30.42 },
-  { id: 9,  speaker: 'ai',     text: "Thank you. Just to confirm, your date of birth is September 22nd, 1995. Is that correct?", timestamp: 33.95 },
+  { id: 9,  speaker: 'ai',     text: "Thank you. Just to confirm, your date of birth is September 22nd, 1995. Is that correct?", timestamp: 35.51 },
   { id: 10, speaker: 'caller', text: "Yes.", timestamp: 43.12 },
   { id: 11, speaker: 'ai',     text: "Thank you for your patience. We can proceed with scheduling your appointment. Do you have a specific date in mind, or would you like me to look for the earliest available time?", timestamp: 43.85 },
   { id: 12, speaker: 'caller', text: "I'm usually free Thursdays and Fridays, so how about let's check this Thursday?", timestamp: 53.15 },
