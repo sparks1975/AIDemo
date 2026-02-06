@@ -249,26 +249,21 @@ export default function DemoPage() {
 
   return (
     <div className="min-h-screen bg-[#F5F5F5] flex flex-col relative overflow-hidden">
-      {/* Subtle AI sound wave ripple background */}
+      {/* Subtle AI ambient glow background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(4)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
-            style={{
-              width: `${300 + i * 200}px`,
-              height: `${300 + i * 200}px`,
-              border: '1px solid rgba(1, 122, 255, 0.12)',
-              animation: `ripple-pulse ${8 + i * 3}s ease-in-out infinite`,
-              animationDelay: `${i * 2}s`,
-            }}
-          />
-        ))}
         <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full blur-3xl"
+          className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-3xl"
           style={{
-            background: 'radial-gradient(circle, rgba(1,122,255,0.12) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(1,122,255,0.10) 0%, transparent 70%)',
             animation: 'glow-breathe 10s ease-in-out infinite',
+          }}
+        />
+        <div
+          className="absolute bottom-1/4 left-1/3 -translate-x-1/2 w-[400px] h-[400px] rounded-full blur-3xl"
+          style={{
+            background: 'radial-gradient(circle, rgba(1,122,255,0.06) 0%, transparent 70%)',
+            animation: 'glow-breathe 14s ease-in-out infinite',
+            animationDelay: '4s',
           }}
         />
       </div>
