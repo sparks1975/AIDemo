@@ -27,7 +27,7 @@ export const demoConversation: ChatMessage[] = [
   { id: 2,  speaker: 'caller', text: "Hi Charlie, my name's Megan. I'm new to town and I'm looking for a new chiropractor. Are you guys accepting new patients?", timestamp: 5.78 },
   { id: 3,  speaker: 'ai',     text: "Yes, we are accepting new patients. I can help you schedule an appointment. May I have your last name, please?", timestamp: 13.3 },
   { id: 4,  speaker: 'caller', text: "Yes, it's Jones.", timestamp: 19.48 },
-  { id: 5,  speaker: 'ai',     text: "Thank you. That's Jones, spelled J-O-N-E-S, correct?", timestamp: 20.55 },
+  { id: 5,  speaker: 'ai',     text: "Thank you. That's Jones, spelled J-O-N-E-S, correct?", timestamp: 22.67 },
   { id: 6,  speaker: 'caller', text: "Yeah, you got it.", timestamp: 26.48 },
   { id: 7,  speaker: 'ai',     text: "Great. Could you please provide your date of birth?", timestamp: 27.48 },
   { id: 8,  speaker: 'caller', text: "September 22nd, 1995.", timestamp: 30.42 },
