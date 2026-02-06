@@ -369,13 +369,13 @@ export default function DemoPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="flex flex-col items-center text-center max-w-sm px-4"
+              className="flex flex-col items-center text-center max-w-lg px-4"
             >
               <motion.p
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.7, ease: 'easeOut' }}
-                className="text-xl md:text-2xl font-semibold text-black leading-relaxed"
+                className="text-3xl md:text-4xl font-semibold text-black leading-relaxed"
                 style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif' }}
               >
                 A call comes in after hours or on a holiday.
@@ -384,7 +384,7 @@ export default function DemoPage() {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1.2, duration: 0.7, ease: 'easeOut' }}
-                className="text-xl md:text-2xl font-extrabold mt-4 leading-relaxed"
+                className="text-3xl md:text-4xl font-extrabold mt-4 leading-relaxed"
                 style={{ 
                   color: ALOHA_BLUE,
                   fontFamily: '-apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif',
