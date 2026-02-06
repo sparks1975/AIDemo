@@ -27,6 +27,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { demoConversation, getBadgesAtTime, demoDuration, type Badge } from '@/lib/demo-script';
 import { cn } from '@/lib/utils';
+import charlieLogo from '@assets/charlielogo_1770392573300.png';
 
 const iconMap: Record<string, React.ElementType> = {
   'phone-missed': PhoneMissed,
@@ -359,7 +360,7 @@ export default function DemoPage() {
               className="flex flex-col items-center text-center px-6 max-w-lg"
             >
               <motion.img
-                src="/attached_assets/charlielogo_1770392573300.png"
+                src={charlieLogo}
                 alt="CharlieAI"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
