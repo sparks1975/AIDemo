@@ -358,10 +358,18 @@ export default function DemoPage() {
               animate={{ opacity: 1, y: 0 }}
               className="flex flex-col items-center text-center px-6 max-w-lg"
             >
+              <motion.img
+                src="/attached_assets/charlielogo_1770392573300.png"
+                alt="CharlieAI"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.1, duration: 0.5, ease: 'easeOut' }}
+                className="w-20 h-20 md:w-24 md:h-24 mb-5"
+              />
               <motion.h1 
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.15, duration: 0.6, ease: 'easeOut' }}
+                transition={{ delay: 0.2, duration: 0.6, ease: 'easeOut' }}
                 className="text-5xl md:text-6xl font-extrabold mb-4 whitespace-nowrap"
                 style={{ 
                   lineHeight: 1.15,
