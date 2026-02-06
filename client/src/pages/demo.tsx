@@ -46,7 +46,7 @@ const iconMap: Record<string, React.ElementType> = {
   'calendar-plus': CalendarPlus,
 };
 
-const ALOHA_BLUE = '#D946EF';
+const ALOHA_BLUE = '#017AFF';
 
 function BadgeComponent({ badge }: { badge: Badge }) {
   const Icon = iconMap[badge.icon] || CheckCircle;
@@ -411,8 +411,8 @@ export default function DemoPage() {
             </div>
           )}
 
-          {/* Debug time display */}
-          {showContent && (
+          {/* Debug time display — hidden, kept for future use */}
+          {false && showContent && (
             <div className="mb-2 text-xs font-mono text-gray-400" data-testid="text-debug-time">
               {currentTime.toFixed(2)}s | Line {currentMessage?.id || '-'}: {currentMessage?.speaker || '-'}
             </div>
