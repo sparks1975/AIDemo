@@ -249,22 +249,23 @@ export default function DemoPage() {
 
   return (
     <div className="min-h-screen bg-[#F5F5F5] flex flex-col relative overflow-hidden">
-      {/* Glassmorphic elevated rings */}
+      {/* Subtle AI ambient glow background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(5)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
-            style={{
-              width: `${150 + i * 120}px`,
-              height: `${150 + i * 120}px`,
-              background: 'transparent',
-              border: '1.5px solid rgba(0, 0, 0, 0.08)',
-              animation: `ripple-pulse ${9 + i * 2.5}s ease-in-out infinite`,
-              animationDelay: `${i * 1.8}s`,
-            }}
-          />
-        ))}
+        <div
+          className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-3xl"
+          style={{
+            background: 'radial-gradient(circle, rgba(1,122,255,0.10) 0%, transparent 70%)',
+            animation: 'glow-breathe 10s ease-in-out infinite',
+          }}
+        />
+        <div
+          className="absolute bottom-1/4 left-1/3 -translate-x-1/2 w-[400px] h-[400px] rounded-full blur-3xl"
+          style={{
+            background: 'radial-gradient(circle, rgba(1,122,255,0.06) 0%, transparent 70%)',
+            animation: 'glow-breathe 14s ease-in-out infinite',
+            animationDelay: '4s',
+          }}
+        />
       </div>
 
       {/* Top bar */}
