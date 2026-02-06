@@ -72,6 +72,9 @@ export function getBadgesAtTime(time: number): Badge[] {
   if (badgeMap.has('request') && badgeMap.has('call') && badgeMap.get('call')!.value !== 'Complete') {
     badgeMap.delete('call');
   }
+  if (badgeMap.has('appointment') && badgeMap.has('request')) {
+    badgeMap.delete('request');
+  }
   const orderedIds = ['call', 'request', 'patient', 'appointment'];
   return orderedIds
     .filter(id => badgeMap.has(id))
