@@ -249,23 +249,25 @@ export default function DemoPage() {
 
   return (
     <div className="min-h-screen bg-[#F5F5F5] flex flex-col relative overflow-hidden">
-      {/* Subtle AI ambient glow background */}
+      {/* Glassmorphic elevated rings */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div
-          className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-3xl"
-          style={{
-            background: 'radial-gradient(circle, rgba(1,122,255,0.10) 0%, transparent 70%)',
-            animation: 'glow-breathe 10s ease-in-out infinite',
-          }}
-        />
-        <div
-          className="absolute bottom-1/4 left-1/3 -translate-x-1/2 w-[400px] h-[400px] rounded-full blur-3xl"
-          style={{
-            background: 'radial-gradient(circle, rgba(1,122,255,0.06) 0%, transparent 70%)',
-            animation: 'glow-breathe 14s ease-in-out infinite',
-            animationDelay: '4s',
-          }}
-        />
+        {[...Array(5)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
+            style={{
+              width: `${250 + i * 180}px`,
+              height: `${250 + i * 180}px`,
+              background: 'rgba(255, 255, 255, 0.35)',
+              boxShadow: `inset 0 1px 2px 0 rgba(255,255,255,0.5), inset 0 -1px 2px 0 rgba(0,0,0,0.03), 0 1px 3px 0 rgba(0,0,0,0.04)`,
+              border: '1px solid rgba(255, 255, 255, 0.5)',
+              backdropFilter: 'blur(2px)',
+              WebkitBackdropFilter: 'blur(2px)',
+              animation: `ripple-pulse ${9 + i * 2.5}s ease-in-out infinite`,
+              animationDelay: `${i * 1.8}s`,
+            }}
+          />
+        ))}
       </div>
 
       {/* Top bar */}
