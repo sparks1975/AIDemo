@@ -296,8 +296,7 @@ export default function DemoPage() {
       </div>
 
       {/* Main content */}
-      <main className="flex-1 flex flex-col items-center justify-end relative z-10 px-4 pb-8">
-        <div className="flex-1" />
+      <main className="flex-1 flex flex-col items-center justify-center relative z-10 px-4 pb-8">
         
         {/* Title - show when not showing content */}
         {!showContent && !isComplete && !showStartingState && (
@@ -349,9 +348,9 @@ export default function DemoPage() {
           </motion.div>
         )}
         
-        {/* Badges - only after latency offset */}
+        {/* Badges */}
         {showContent && !isComplete && (
-          <div className="flex flex-col items-center gap-2 mb-6 px-4 min-h-[180px] justify-end">
+          <div className="flex flex-col items-center gap-2 mb-8 px-4">
             <AnimatePresence>
               {currentBadges.map(badge => (
                 <BadgeComponent key={badge.id} badge={badge} />
