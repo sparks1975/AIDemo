@@ -119,7 +119,7 @@ function BadgeComponent({ badge }: { badge: Badge }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.2 }}
-          className="text-[15px] font-extrabold leading-snug truncate" 
+          className="text-[15px] font-extrabold leading-snug truncate capitalize" 
           style={{ color: '#1D1D1F' }}
         >
           {badge.value}
