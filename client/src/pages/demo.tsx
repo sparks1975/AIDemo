@@ -15,6 +15,7 @@ import {
   Tag,
   User,
   CalendarCheck,
+  CalendarPlus,
   Cake,
   MessageSquare,
   CheckCircle,
@@ -42,6 +43,7 @@ const iconMap: Record<string, React.ElementType> = {
   'clock': Clock,
   'mail': Mail,
   'smartphone': Smartphone,
+  'calendar-plus': CalendarPlus,
 };
 
 const ALOHA_BLUE = '#D946EF';

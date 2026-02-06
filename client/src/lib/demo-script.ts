@@ -51,7 +51,8 @@ export const badgeUpdates: BadgeUpdate[] = [
   { badgeId: 'appointment', icon: 'calendar', label: 'Appointment', value: 'Thursday, October 9th', timestamp: 57.75, color: 'info' },
   { badgeId: 'appointment', icon: 'calendar', label: 'Appointment', value: 'Thu, Oct 9 @ 9:30 AM', timestamp: 69.66, color: 'info' },
   { badgeId: 'appointment', icon: 'calendar-check', label: 'Appointment', value: 'Booked: Thu, Oct 9 @ 9:30 AM', timestamp: 72.21, color: 'success' },
-  { badgeId: 'action', icon: 'smartphone', label: 'Action', value: 'SMS Appointment Reminder Sent', timestamp: 72.21, color: 'success' },
+  { badgeId: 'action1', icon: 'smartphone', label: 'Action', value: 'SMS Appointment Reminder Sent', timestamp: 72.21, color: 'success' },
+  { badgeId: 'action2', icon: 'calendar-plus', label: 'Action', value: 'Appointment Added to Calendar', timestamp: 80.71, color: 'success' },
   { badgeId: 'call', icon: 'check-circle', label: 'Call Status', value: 'Complete', timestamp: 97, color: 'success' },
 ];
 
@@ -76,10 +77,10 @@ export function getBadgesAtTime(time: number): Badge[] {
   if (badgeMap.has('appointment') && badgeMap.has('request')) {
     badgeMap.delete('request');
   }
-  if (badgeMap.has('action') && badgeMap.has('patient')) {
+  if (badgeMap.has('action1') && badgeMap.has('patient')) {
     badgeMap.delete('patient');
   }
-  const orderedIds = ['call', 'request', 'patient', 'appointment', 'action'];
+  const orderedIds = ['call', 'request', 'patient', 'appointment', 'action1', 'action2'];
   return orderedIds
     .filter(id => badgeMap.has(id))
     .map(id => badgeMap.get(id)!);
