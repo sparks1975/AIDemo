@@ -258,7 +258,7 @@ export default function DemoPage() {
             style={{
               width: `${300 + i * 200}px`,
               height: `${300 + i * 200}px`,
-              border: '1px solid rgba(1, 122, 255, 0.06)',
+              border: '1px solid rgba(1, 122, 255, 0.12)',
               animation: `ripple-pulse ${8 + i * 3}s ease-in-out infinite`,
               animationDelay: `${i * 2}s`,
             }}
@@ -267,7 +267,7 @@ export default function DemoPage() {
         <div
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full blur-3xl"
           style={{
-            background: 'radial-gradient(circle, rgba(1,122,255,0.07) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(1,122,255,0.12) 0%, transparent 70%)',
             animation: 'glow-breathe 10s ease-in-out infinite',
           }}
         />
