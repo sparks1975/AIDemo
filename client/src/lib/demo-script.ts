@@ -43,7 +43,7 @@ export const demoConversation: ChatMessage[] = [
 ];
 
 export const badgeUpdates: BadgeUpdate[] = [
-  { badgeId: 'call', icon: 'phone', label: 'Call Status', value: 'Charlie answering...', timestamp: 0, color: 'success' },
+  { badgeId: 'call', icon: 'phone', label: 'Call Status', value: 'CharlieAI answering', timestamp: 0, color: 'success' },
   { badgeId: 'request', icon: 'clipboard', label: 'Request', value: 'New Patient Booking', timestamp: 14.32, color: 'info' },
   { badgeId: 'patient', icon: 'user', label: 'Patient', value: 'Collecting info...', timestamp: 20.33, color: 'default' },
   { badgeId: 'patient', icon: 'user', label: 'Patient', value: 'Megan Jones', timestamp: 26.95, color: 'info' },
