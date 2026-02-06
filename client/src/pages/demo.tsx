@@ -80,6 +80,7 @@ function BadgeComponent({ badge }: { badge: Badge }) {
       transition={{ type: 'spring', damping: 28, stiffness: 380 }}
       className="flex items-center gap-3.5 px-4 py-3 rounded-2xl w-[345px]"
       style={{
+        fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif',
         background: 'rgba(255, 255, 255, 0.72)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
