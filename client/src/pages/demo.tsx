@@ -325,8 +325,8 @@ export default function DemoPage() {
         />
       </div>
 
-      {/* Top bar */}
-      <div className="absolute top-4 right-4 z-30 flex items-center gap-2">
+      {/* Top bar — hidden but preserved */}
+      <div className="absolute top-4 right-4 z-30 flex items-center gap-2" style={{ visibility: 'hidden' }}>
         <Button 
           variant="ghost" 
           size="icon"
