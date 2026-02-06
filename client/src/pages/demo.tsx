@@ -144,7 +144,7 @@ export default function DemoPage() {
   const introTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [hasStartedOnce, setHasStartedOnce] = useState(false);
 
-  const earlyCompleteTime = 86;
+  const earlyCompleteTime = 89;
   
   useEffect(() => {
     if (currentTime >= earlyCompleteTime && !isComplete && isPlaying) {
