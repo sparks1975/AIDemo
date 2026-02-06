@@ -137,8 +137,10 @@ export default function DemoPage() {
   const [isComplete, setIsComplete] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isStarting, setIsStarting] = useState(false);
+  const [showIntro, setShowIntro] = useState(false);
   
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const introTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [hasStartedOnce, setHasStartedOnce] = useState(false);
 
   const showContent = hasStartedOnce && (audioActuallyPlaying || (isPlaying === false && currentTime > 0 && !isComplete));
@@ -208,6 +210,9 @@ export default function DemoPage() {
       if (rafId !== null) {
         cancelAnimationFrame(rafId);
       }
+      if (introTimeoutRef.current) {
+        clearTimeout(introTimeoutRef.current);
+      }
       audio.pause();
     };
   }, []);
@@ -218,6 +223,17 @@ export default function DemoPage() {
     if (isPlaying) {
       audioRef.current.pause();
       setIsPlaying(false);
+    } else if (!hasStartedOnce && !showIntro) {
+      setShowIntro(true);
+      introTimeoutRef.current = setTimeout(() => {
+        setShowIntro(false);
+        setIsStarting(true);
+        audioRef.current?.play().catch(err => {
+          console.error('Play error:', err);
+          setIsStarting(false);
+        });
+        setIsPlaying(true);
+      }, 4000);
     } else {
       setIsStarting(true);
       audioRef.current.play().catch(err => {
@@ -226,7 +242,7 @@ export default function DemoPage() {
       });
       setIsPlaying(true);
     }
-  }, [isPlaying, isLoading]);
+  }, [isPlaying, isLoading, hasStartedOnce, showIntro]);
 
   const handleSkip = useCallback(() => {
     if (audioRef.current) {
@@ -241,18 +257,27 @@ export default function DemoPage() {
 
   const handleReplay = useCallback(() => {
     if (!audioRef.current) return;
+    if (introTimeoutRef.current) {
+      clearTimeout(introTimeoutRef.current);
+      introTimeoutRef.current = null;
+    }
     
     audioRef.current.currentTime = 0;
     setCurrentTime(0);
     setIsComplete(false);
     setHasStartedOnce(false);
-    setIsStarting(true);
+    setShowIntro(true);
+    setIsPlaying(false);
     
-    audioRef.current.play().catch(err => {
-      console.error('Play error:', err);
-      setIsStarting(false);
-    });
-    setIsPlaying(true);
+    introTimeoutRef.current = setTimeout(() => {
+      setShowIntro(false);
+      setIsStarting(true);
+      audioRef.current?.play().catch(err => {
+        console.error('Play error:', err);
+        setIsStarting(false);
+      });
+      setIsPlaying(true);
+    }, 4000);
   }, []);
 
   const toggleMute = useCallback(() => {
@@ -314,7 +339,7 @@ export default function DemoPage() {
         {/* Center zone — badges sit vertically centered */}
         <div className="flex-1 flex flex-col items-center justify-center">
           {/* Title - show when not showing content */}
-          {!showContent && !isComplete && !showStartingState && (
+          {!showContent && !isComplete && !showStartingState && !showIntro && (
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -335,6 +360,38 @@ export default function DemoPage() {
               <p className="text-[#4D4D4D] text-sm">
                 {isLoading ? 'Loading audio...' : 'Press play to hear an actual AI call'}
               </p>
+            </motion.div>
+          )}
+
+          {/* Intro scene — sets the stage before audio starts */}
+          {showIntro && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="flex flex-col items-center text-center max-w-sm px-4"
+            >
+              <motion.p
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.7, ease: 'easeOut' }}
+                className="text-xl md:text-2xl font-semibold text-black leading-relaxed"
+                style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif' }}
+              >
+                A call comes in after hours or on a holiday.
+              </motion.p>
+              <motion.p
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.2, duration: 0.7, ease: 'easeOut' }}
+                className="text-xl md:text-2xl font-extrabold mt-4 leading-relaxed"
+                style={{ 
+                  color: ALOHA_BLUE,
+                  fontFamily: '-apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif',
+                }}
+              >
+                CharlieAI answers 24/7.
+              </motion.p>
             </motion.div>
           )}
 
@@ -419,7 +476,7 @@ export default function DemoPage() {
           )}
 
           {/* Controls */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4" style={{ visibility: showIntro ? 'hidden' : 'visible' }}>
           {isComplete ? (
             <Button
               onClick={handleReplay}
