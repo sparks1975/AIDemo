@@ -44,7 +44,7 @@ const iconMap: Record<string, React.ElementType> = {
   'smartphone': Smartphone,
 };
 
-const ALOHA_BLUE = '#16A34A';
+const ALOHA_BLUE = '#D946EF';
 
 function BadgeComponent({ badge }: { badge: Badge }) {
   const Icon = iconMap[badge.icon] || CheckCircle;
@@ -118,10 +118,9 @@ export default function DemoPage() {
   const [isStarting, setIsStarting] = useState(false);
   
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [hasStartedOnce, setHasStartedOnce] = useState(false);
 
-  // audioActuallyPlaying is now only true when currentTime has advanced
-  // So we can trust it directly
-  const showContent = audioActuallyPlaying;
+  const showContent = hasStartedOnce && (audioActuallyPlaying || (isPlaying === false && currentTime > 0 && !isComplete));
   
   const currentBadges = showContent ? getBadgesAtTime(currentTime) : [];
   
@@ -148,6 +147,7 @@ export default function DemoPage() {
     const handlePlaying = () => {
       setIsStarting(false);
       setAudioActuallyPlaying(true);
+      setHasStartedOnce(true);
       if (rafId === null) {
         rafId = requestAnimationFrame(pollTime);
       }
@@ -224,6 +224,7 @@ export default function DemoPage() {
     audioRef.current.currentTime = 0;
     setCurrentTime(0);
     setIsComplete(false);
+    setHasStartedOnce(false);
     setIsStarting(true);
     
     audioRef.current.play().catch(err => {
