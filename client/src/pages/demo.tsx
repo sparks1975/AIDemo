@@ -258,9 +258,9 @@ export default function DemoPage() {
             style={{
               width: `${150 + i * 120}px`,
               height: `${150 + i * 120}px`,
-              background: 'rgba(255, 255, 255, 0.15)',
-              boxShadow: `inset 0 1px 2px 0 rgba(255,255,255,0.3), inset 0 -1px 2px 0 rgba(0,0,0,0.03), 0 1px 3px 0 rgba(0,0,0,0.04)`,
-              border: '1px solid rgba(255, 255, 255, 0.35)',
+              background: 'rgba(255, 255, 255, 0.28)',
+              boxShadow: `inset 0 1px 2px 0 rgba(255,255,255,0.45), inset 0 -1px 2px 0 rgba(0,0,0,0.04), 0 1px 3px 0 rgba(0,0,0,0.05)`,
+              border: '1px solid rgba(255, 255, 255, 0.5)',
               backdropFilter: 'blur(3px)',
               WebkitBackdropFilter: 'blur(3px)',
               animation: `ripple-pulse ${9 + i * 2.5}s ease-in-out infinite`,
